@@ -63,16 +63,16 @@ void ImprimirTeste(int lb[],int cb[],int lt[],int ct[],int qb[],int db[],int siz
   }
 }
 int retornaQuadrante(int linha, int coluna, int N){
-  if(linha <= floor(N/2) and coluna > floor(N/2)){
+  if(linha <= floor(N/2) && coluna > floor(N/2)){
     return 1;
   }
-  if(linha <= floor(N/2) and coluna <= floor(N/2)){
+  if(linha <= floor(N/2) && coluna <= floor(N/2)){
     return 2;
   }
-  if(linha > floor(N/2) and coluna <= floor(N/2)){
+  if(linha > floor(N/2) && coluna <= floor(N/2)){
     return 3;
   }
-  if(linha > floor(N/2) and coluna > floor(N/2)){
+  if(linha > floor(N/2) && coluna > floor(N/2)){
     return 4;
   }
   return 0;
