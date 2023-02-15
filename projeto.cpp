@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include <cmath>
 
 using namespace std;
 
@@ -61,10 +62,37 @@ void ImprimirTeste(int lb[],int cb[],int lt[],int ct[],int qb[],int db[],int siz
     cout << db[i] << " ";
   }
 }
+int retornaQuadrante(int linha, int coluna, int N){
+  if(linha <= floor(N/2) and coluna > floor(N/2)){
+    return 1;
+  }
+  if(linha <= floor(N/2) and coluna <= floor(N/2)){
+    return 2;
+  }
+  if(linha > floor(N/2) and coluna <= floor(N/2)){
+    return 3;
+  }
+  if(linha > floor(N/2) and coluna > floor(N/2)){
+    return 4;
+  }
+  return 0;
+}
+
+int Diagonal(int linha, int coluna){
+  if(linha == coluna){
+    return 1;
+  }
+  //if L-l+1 = c
+  //Necessario fazer isto, mas não sei de onde vem o L 
+  return -1;
+}
+
 
 int main() {
+  
   int numeroQR;
   cin >> numeroQR;
+
   for(int i = 0; i < numeroQR; i++){
     int numero;
     cin >> numero;
@@ -78,6 +106,7 @@ int main() {
     ImprimirTeste(lb,cb,lt,ct,qb,db,numero);
     cout << endl;
   }
+  
  
   return 0;
 }
