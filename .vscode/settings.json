@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "ostream": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "__string": "cpp",
+        "chrono": "cpp",
+        "complex": "cpp",
+        "cmath": "cpp",
+        "cstdlib": "cpp"
     }
 }
