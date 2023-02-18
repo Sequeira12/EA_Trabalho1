@@ -294,6 +294,7 @@ int main()
       }
       else
       {
+        // chamar aqui a função que mete os 0's e 1's
         imprimeQRcode(array, numero);
       }
     }
