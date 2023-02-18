@@ -78,6 +78,38 @@ int retornaQuadrante(int linha, int coluna, int N){
   return 0;
 }
 
+int verificaDefeito(int lb[],int cb[],int lt[],int ct[],int qb[],int db[],int N){
+  int soma = 0;
+  int fl = floor(N/2+1);
+  int result = pow(fl,2.0);
+  // Verifica linha e colunas (colors e transitions)
+  for(int i = 0; i < N; i++){
+    if(lb[i] < 0 || lb[i] > N || cb[i] < 0 || cb[i] > N){
+      return 0;
+    }
+    if(lt[i] < 0 || lt[i] > N - 1 || ct[i] < 0 || ct[i] > N - 1){
+      return 0;
+    }
+  }
+  // Verifica diagonais 
+  for(int i = 0; i < 2; i++){
+    if(db[i] < 0 || db[i] > N){
+      return 0;
+    }
+  }
+  // Verifica quadrantes
+  for (int i = 0; i < 4; i++)
+  {
+    soma += qb[i];
+  }
+  if(soma > result){
+    return 0;
+  }
+  return 1;
+}
+
+
+
 int Diagonal(int linha, int coluna){
   if(linha == coluna){
     return 1;
@@ -103,8 +135,14 @@ int main() {
     int qb[numero];
     int db[2];
     LeituraQrCode(lb,cb,lt,ct,qb,db,numero);
-    ImprimirTeste(lb,cb,lt,ct,qb,db,numero);
-    cout << endl;
+    if(!verificaDefeito(lb,cb,lt,ct,qb,db,numero)){
+      cout << "DEFECT: No QR Code generated!" << endl;
+    }else{
+      cout << endl;
+    }
+     // cout << is_valid(lb,cb,lt,ct,qb,db,numero) << endl;
+     // ImprimirTeste(lb,cb,lt,ct,qb,db,numero);
+      
   }
   
  
