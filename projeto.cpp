@@ -3,7 +3,7 @@
 #include <cmath>
 
 using namespace std;
-
+const int tamanho = 30;
 void LeituraQrCode(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int size)
 {
   int valor, i;
@@ -211,6 +211,51 @@ bool verificaLinhasColunasQuadrante(int lb[], int cb[], int qb[], int num)
   return (somalb == somaqb && somacb == somaqb);
 }
 
+void preenche(int array[tamanho][tamanho], int tam)
+{
+  for (int i = 0; i < tam; i++)
+  {
+    for (int k = 0; k < tam; k++)
+    {
+      array[i][k] = 0;
+    }
+  }
+}
+
+void imprimeQRcode(int array[tamanho][tamanho], int tam)
+{
+  cout << "VALID: 1 QR code generated!\n";
+  cout << "+";
+  for (int i = 0; i < tam; i++)
+  {
+    cout << "-";
+  }
+  cout << "+\n";
+  for (int i = 0; i < tam; i++)
+  {
+    cout << "|";
+    for (int k = 0; k < tam; k++)
+    {
+      if (array[i][k] == 0)
+      {
+        cout << " ";
+      }
+      else
+      {
+        cout << "#";
+      }
+    }
+
+    cout << "|\n";
+  }
+  cout << "+";
+  for (int i = 0; i < tam; i++)
+  {
+    cout << "-";
+  }
+  cout << "+\n";
+}
+
 int main()
 {
 
@@ -221,11 +266,15 @@ int main()
   {
     int numero;
     cin >> numero;
+    int array[tamanho][tamanho];
+    int tamanho = numero;
+    preenche(array, numero);
     int lb[numero];
     int cb[numero];
     int lt[numero];
     int ct[numero];
     int qb[numero];
+
     int db[2];
     LeituraQrCode(lb, cb, lt, ct, qb, db, numero);
 
@@ -239,9 +288,13 @@ int main()
       {
         cout << "DEFECT: No QR Code generated!" << endl;
       }
-      if (VerificaInvalido(lb, cb, lt, ct, qb, db, numero))
+      else if (VerificaInvalido(lb, cb, lt, ct, qb, db, numero))
       {
         cout << "INVALID: " << numero / qb[0] << " QR Codes generated!" << endl;
+      }
+      else
+      {
+        imprimeQRcode(array, numero);
       }
     }
   }
