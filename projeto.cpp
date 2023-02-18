@@ -152,6 +152,9 @@ int verificaDefeito(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], 
   return 1;
 }
 
+/*
+Verifica se é possivel gerar um codigo
+*/
 int VerificaInvalido(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int N)
 {
   int verificalb = 0, verificacb = 0, verificact = 0, verificalt = 0, verificaqb = 0;
@@ -188,17 +191,10 @@ int VerificaInvalido(int lb[], int cb[], int lt[], int ct[], int qb[], int db[],
   return 1;
 }
 
-int Diagonal(int linha, int coluna)
-{
-  if (linha == coluna)
-  {
-    return 1;
-  }
-  // if L-l+1 = c
-  // Necessario fazer isto, mas não sei de onde vem o L
-  return -1;
-}
-
+/*
+Verifica se o nº de pretos em todas as linhas dá o mesmo que os quadrantes todos juntos.
+Verifica se o nº de pretos em todas as colunas dá o mesmo que os quadrantes todos juntos.
+*/
 bool verificaLinhasColunasQuadrante(int lb[], int cb[], int qb[], int num)
 {
   int somalb = 0, somacb = 0, somaqb = 0;
