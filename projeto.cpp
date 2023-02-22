@@ -7,6 +7,26 @@ using namespace std;
 const int tamanho = 30;
 unordered_set<int> P;
 
+void retira(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int x, int y)
+{
+	if (lb[x] > 0)
+	{
+		lb[x]--;
+	}
+	if (lt[x] > 0)
+	{
+		lt[x]--;
+	}
+	if (cb[y] > 0)
+	{
+		cb[y]--;
+	}
+	if (ct[y] > 0)
+	{
+		ct[y]--;
+	}
+}
+
 void LeituraQrCode(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int size)
 {
 	int valor, i;
@@ -46,37 +66,37 @@ void ImprimirTeste(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], i
 {
 	int valor, i;
 	cout << endl
-			 << "ARRAY LB: ";
+		 << "ARRAY LB: ";
 	for (i = 0; i < size; i++)
 	{
 		cout << lb[i] << " ";
 	}
 	cout << endl
-			 << "ARRAY CB: ";
+		 << "ARRAY CB: ";
 	for (i = 0; i < size; i++)
 	{
 		cout << cb[i] << " ";
 	}
 	cout << endl
-			 << "ARRAY LT: ";
+		 << "ARRAY LT: ";
 	for (i = 0; i < size; i++)
 	{
 		cout << lt[i] << " ";
 	}
 	cout << endl
-			 << "ARRAY CT: ";
+		 << "ARRAY CT: ";
 	for (i = 0; i < size; i++)
 	{
 		cout << ct[i] << " ";
 	}
 	cout << endl
-			 << "ARRAY QB: ";
+		 << "ARRAY QB: ";
 	for (i = 0; i < 4; i++)
 	{
 		cout << qb[i] << " ";
 	}
 	cout << endl
-			 << "ARRAY DB: ";
+		 << "ARRAY DB: ";
 	for (i = 0; i < 2; i++)
 	{
 
@@ -97,19 +117,21 @@ int somador(int array[], int tam)
 
 int retornaQuadrante(int linha, int coluna, int N)
 {
-	if (linha <= floor(N / 2) && coluna > floor(N / 2))
+	int a = floor(N / 2);
+	// printf("Linha %d, coluna %d  e floor %d\n", linha, coluna, a);
+	if (linha <= a && coluna > a)
 	{
 		return 1;
 	}
-	if (linha <= floor(N / 2) && coluna <= floor(N / 2))
+	if (linha <= a && coluna <= a)
 	{
 		return 2;
 	}
-	if (linha > floor(N / 2) && coluna <= floor(N / 2))
+	if (linha > a && coluna <= a)
 	{
 		return 3;
 	}
-	if (linha > floor(N / 2) && coluna > floor(N / 2))
+	if (linha > a && coluna > a)
 	{
 		return 4;
 	}
@@ -149,6 +171,7 @@ int verificaDefeito(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], 
 
 	if (soma > result)
 	{
+
 		return 0;
 	}
 
@@ -220,7 +243,7 @@ void preenche(int array[tamanho][tamanho], int tam)
 	{
 		for (int k = 0; k < tam; k++)
 		{
-			array[i][k] = 0;
+			array[i][k] = 2;
 		}
 	}
 }
@@ -243,9 +266,13 @@ void imprimeQRcode(int array[tamanho][tamanho], int tam)
 			{
 				cout << " ";
 			}
-			else
+			if (array[i][k] == 1)
 			{
 				cout << "#";
+			}
+			if (array[i][k] == 2)
+			{
+				cout << "_";
 			}
 		}
 
@@ -258,46 +285,75 @@ void imprimeQRcode(int array[tamanho][tamanho], int tam)
 	}
 	cout << "+\n";
 }
-
+int array2[tamanho][tamanho];
 void teste(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int N, int x, int y, int array[][tamanho])
 {
-
-	if (y > N - 1 || x > N - 1)
+	int next = x + 1;
+	// imprimeQRcode(array, N);
+	if (x == N)
 	{
+		// imprimeQRcode(array, N);
+		int conta = 0, conta2 = 0;
+		for (int i = 0; i < N; i++)
+		{
+			if (array[i][i] == 1)
+			{
+				conta++;
+			}
+
+			if (array[N - 1 - i][i] == 1)
+			{
+				conta2++;
+			}
+		}
+		// true (conta == db[0] && conta2 == db[1])
+		if (conta == db[0] && conta2 == db[1])
+		{
+			for (int i = 0; i < N; i++)
+			{
+				for (int j = 0; j < N; j++)
+				{
+					array2[i][j] = array[i][j];
+				}
+			}
+		}
 		return;
 	}
 
-	// condição que se tem de mexer...
-	if ((lb[x] >= 1 && lt[x] >= 1 && cb[y] >= 1 && ct[y] >= 1))
+	// no caso de apenas existir um preto e uma transição
+	if (lb[x] == 1 && lt[x] == 1)
 	{
-		int z = (x + y) * (x + y + 1) / 2 + y;
-		if (P.count(z) == 0)
-		{
-			P.insert(z);
 
-			if (lb[x] > 0)
-			{
-				lb[x]--;
-			}
-			if (lt[x] > 0)
-			{
-				lt[x]--;
-			}
-			if (cb[y] > 0)
-			{
-				cb[y]--;
-			}
-			if (ct[y] > 0)
-			{
-				ct[y]--;
-			}
-			array[x][y] = 1;
+		for (int i = 0; i < N - 1; i++)
+		{
+			array[x][i] = 0;
 		}
+		array[x][N - 1] = 1;
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+
+		array[x][0] = 1;
+		for (int i = 1; i < N; i++)
+		{
+			array[x][i] = 0;
+		}
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
 	}
-	// passa pelos 3 vizinhos- lado direito, baixo e baixo(direito)
-	teste(lb, cb, lt, ct, qb, db, N, x + 1, y + 1, array);
-	teste(lb, cb, lt, ct, qb, db, N, x + 1, y + 0, array);
-	teste(lb, cb, lt, ct, qb, db, N, x + 0, y + 1, array);
+	if (lb[x] > 1 && lb[x] == N / 2)
+	{
+		printf("ENTROU A\n");
+	}
+
+	// no caso de apenas existir nenhum preto
+	if (lb[x] == 0)
+	{
+		for (int i = 0; i < N; i++)
+		{
+			array[x][i] = 0;
+		}
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+	}
+
+	// teste(lb, cb, lt, ct, qb, db, N, x + 1, y + 0, array);
 }
 
 int main()
@@ -332,6 +388,7 @@ int main()
 			{
 				cout << "DEFECT: No QR Code generated!" << endl;
 			}
+
 			else if (VerificaInvalido(lb, cb, lt, ct, qb, db, numero))
 			{
 				cout << "INVALID: " << numero / qb[0] << " QR Codes generated!" << endl;
@@ -341,7 +398,7 @@ int main()
 
 				// chamar aqui a função que mete os 0's e 1's
 				teste(lb, cb, lt, ct, qb, db, numero, 0, 0, array);
-				imprimeQRcode(array, numero);
+				imprimeQRcode(array2, numero);
 			}
 		}
 	}
