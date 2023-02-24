@@ -6,7 +6,9 @@
 using namespace std;
 const int tamanho = 30;
 unordered_set<int> P;
-
+int contador = 0;
+void imprimeQRcode(int array[tamanho][tamanho], int tam);
+int Same = 0;
 void retira(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int x, int y)
 {
 	if (lb[x] > 0)
@@ -221,20 +223,68 @@ int VerificaInvalido(int lb[], int cb[], int lt[], int ct[], int qb[], int db[],
 Verifica se o nº de pretos em todas as linhas dá o mesmo que os quadrantes todos juntos.
 Verifica se o nº de pretos em todas as colunas dá o mesmo que os quadrantes todos juntos.
 */
-bool verificaLinhasColunasQuadrante(int lb[], int cb[], int qb[], int num)
+bool verificacaoFinal(int cb[], int ct[], int array[tamanho][tamanho], int num)
 {
-	int somalb = 0, somacb = 0, somaqb = 0;
-	for (int i = 0; i < num; i++)
+
+	for (int col = 0; col < num; col++)
 	{
-		somalb += lb[i];
-		somacb += cb[i];
-	}
-	for (int i = 0; i < 4; i++)
-	{
-		somaqb += qb[i];
+		int somaCB = 0, somaCT = 0;
+		for (int i = 0; i < num; i++)
+		{
+
+			if (array[i][col] == 1)
+			{
+				somaCB += 1;
+			}
+			if (i != num - 1)
+			{
+				if (array[i][col] != array[i + 1][col])
+				{
+					somaCT += 1;
+				}
+			}
+		}
+
+		if (somaCB != cb[col] || somaCT != ct[col])
+		{
+			return false;
+		}
 	}
 
-	return (somalb == somaqb && somacb == somaqb);
+	return true;
+}
+
+bool verificacaoAMEIO(int cb[], int ct[], int array[tamanho][tamanho], int num, int linha)
+{
+
+	for (int col = 0; col < num; col++)
+	{
+		int somaCB = 0, somaCT = 0;
+		for (int i = 0; i < num; i++)
+		{
+
+			if (array[i][col] == 1)
+			{
+				somaCB += 1;
+			}
+			if (i != num - 1)
+			{
+				if (array[i][col] != array[i + 1][col])
+				{
+					somaCT += 1;
+				}
+			}
+		}
+		printf("%d:CB  %d --> %d  CT %d ---->%d\n", col, somaCB, cb[col], somaCT, ct[col]);
+
+		if (somaCB > cb[col])
+		{
+			printf("FODEU-se\n\n");
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void preenche(int array[tamanho][tamanho], int tam)
@@ -243,7 +293,7 @@ void preenche(int array[tamanho][tamanho], int tam)
 	{
 		for (int k = 0; k < tam; k++)
 		{
-			array[i][k] = 2;
+			array[i][k] = 0;
 		}
 	}
 }
@@ -288,8 +338,20 @@ void imprimeQRcode(int array[tamanho][tamanho], int tam)
 int array2[tamanho][tamanho];
 void teste(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int N, int x, int y, int array[][tamanho])
 {
+
+	contador++;
 	int next = x + 1;
 	// imprimeQRcode(array, N);
+	/*if (verificacaoAMEIO(cb, ct, array, N, x) == false)
+	{
+		return;
+	};
+	 if (verificacaoAMEIO(cb, ct, array, N, x) == 0)
+	{
+		// printf("ENTROU\n");
+		return;
+	}
+	*/
 	if (x == N)
 	{
 		// imprimeQRcode(array, N);
@@ -307,8 +369,9 @@ void teste(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int N, in
 			}
 		}
 		// true (conta == db[0] && conta2 == db[1])
-		if (conta == db[0] && conta2 == db[1])
+		if (conta == db[0] && conta2 == db[1] && verificacaoFinal(cb, ct, array, N))
 		{
+			Same++;
 			for (int i = 0; i < N; i++)
 			{
 				for (int j = 0; j < N; j++)
@@ -320,27 +383,153 @@ void teste(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int N, in
 		return;
 	}
 
+	// existem N-1 pretos e verifico se tem duas ou uma transição
+	if (lb[x] == N - 1)
+	{
+		if (lt[x] == 2)
+		{
+			int contador = 1;
+			for (int i = 1; i < N - 1; i++)
+			{
+				array[x][0] = 1;
+				array[x][N - 1] = 1;
+				for (int j = 0; j < N - 1; j++)
+				{
+					if (j != i)
+					{
+						array[x][j] = 1;
+					}
+					else
+					{
+						array[x][j] = 0;
+					}
+				}
+				teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+			}
+		}
+		if (lt[x] == 1)
+		{
+			for (int i = 0; i < N - 1; i++)
+			{
+				array[x][i] = 1;
+			}
+			array[x][N - 1] = 0;
+			teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+
+			array[x][0] = 0;
+			for (int i = 1; i < N; i++)
+			{
+				array[x][i] = 1;
+			}
+
+			teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+		}
+	}
+
+	// no caso de existir apenas um preto ATENCAO JUNTAR COM O DE BAIXO
+	if (lb[x] == 1 && lt[x] == 2)
+	{
+		for (int i = 1; i < N - 1; i++)
+		{
+			array[x][0] = 0;
+			array[x][N - 1] = 0;
+			for (int j = 0; j < N - 1; j++)
+			{
+				if (j == i)
+				{
+					array[x][j] = 1;
+				}
+				else
+				{
+					array[x][j] = 0;
+				}
+			}
+			teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+		}
+	}
+	if (lt[x] == 2)
+	{
+		if (lb[x] > lt[x])
+		{
+			array[x][0] = 1;
+			array[x][N - 1] = 1;
+			int valorFalta = lb[x] - 2;
+			if (valorFalta == 1)
+			{
+				array[x][N - 2] = 1;
+				for (int i = 1; i < N - 2; i++)
+				{
+					array[x][i] = 0;
+				}
+				teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+				array[x][1] = 1;
+				for (int i = 2; i < N - 1; i++)
+				{
+					array[x][i] = 0;
+				}
+				teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+			}
+		}
+	}
+
 	// no caso de apenas existir um preto e uma transição
 	if (lb[x] == 1 && lt[x] == 1)
 	{
-
-		for (int i = 0; i < N - 1; i++)
-		{
-			array[x][i] = 0;
-		}
-		array[x][N - 1] = 1;
-		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
-
 		array[x][0] = 1;
 		for (int i = 1; i < N; i++)
 		{
 			array[x][i] = 0;
 		}
 		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+		for (int i = 0; i < N - 1; i++)
+		{
+			array[x][i] = 0;
+		}
+		array[x][N - 1] = 1;
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
 	}
-	if (lb[x] > 1 && lb[x] == N / 2)
+	// TEM METADE DE PRETOS:
+
+	if (lb[x] == N / 2 && N % 2 == 0)
 	{
-		printf("ENTROU A\n");
+		for (int i = 0; i < N - 1; i += 2)
+		{
+			array[x][i] = 0;
+			array[x][i + 1] = 1;
+		}
+
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+		for (int i = 0; i < N - 1; i += 2)
+		{
+			array[x][i] = 1;
+			array[x][i + 1] = 0;
+		}
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+	}
+
+	// LINHA TODA PRETA
+	if (lb[x] == N)
+	{
+		for (int i = 0; i < N; i++)
+		{
+			array[x][i] = 1;
+		}
+
+		teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+	}
+	if (lt[x] == N - 1)
+	{
+		if ((float)N / 2 < (float)lb[x])
+		{
+
+			for (int i = 0; i < N; i += 2)
+			{
+				array[x][i + 1] = 0;
+				array[x][i] = 1;
+			}
+
+			teste(lb, cb, lt, ct, qb, db, N, next, y, array);
+		}
 	}
 
 	// no caso de apenas existir nenhum preto
@@ -364,6 +553,7 @@ int main()
 
 	for (int i = 0; i < numeroQR; i++)
 	{
+		Same = 0;
 		int numero;
 		cin >> numero;
 		int array[tamanho][tamanho];
@@ -378,30 +568,21 @@ int main()
 		int db[2];
 		LeituraQrCode(lb, cb, lt, ct, qb, db, numero);
 
-		if (!verificaDefeito(lb, cb, lt, ct, qb, db, numero))
+		// chamar aqui a função que mete os 0's e 1's
+		teste(lb, cb, lt, ct, qb, db, numero, 0, 0, array);
+		if (Same == 1)
 		{
-			cout << "DEFECT: No QR Code generated!" << endl;
+			imprimeQRcode(array2, numero);
+		}
+		else if (Same > 1)
+		{
+			printf("INVALID: %d QR Codes generated!\n", Same);
 		}
 		else
 		{
-			if (!verificaLinhasColunasQuadrante(lb, cb, qb, numero))
-			{
-				cout << "DEFECT: No QR Code generated!" << endl;
-			}
-
-			else if (VerificaInvalido(lb, cb, lt, ct, qb, db, numero))
-			{
-				cout << "INVALID: " << numero / qb[0] << " QR Codes generated!" << endl;
-			}
-			else
-			{
-
-				// chamar aqui a função que mete os 0's e 1's
-				teste(lb, cb, lt, ct, qb, db, numero, 0, 0, array);
-				imprimeQRcode(array2, numero);
-			}
+			printf("DEFECT: No QR code generated!\n");
 		}
-	}
+		}
 
 	return 0;
 }
