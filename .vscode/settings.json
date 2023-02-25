@@ -1,11 +1,6 @@
 {
     "files.associations": {
-        "ostream": "cpp",
-        "iostream": "cpp",
-        "__string": "cpp",
-        "chrono": "cpp",
-        "complex": "cpp",
-        "cmath": "cpp",
-        "cstdlib": "cpp"
+        "*.m": "matlab",
+        "array": "cpp"
     }
 }
