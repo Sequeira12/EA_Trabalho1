@@ -1,304 +1,350 @@
 #include <iostream>
 #include <array>
 #include <cmath>
-#include <unordered_set>
 #include <vector>
+#include <algorithm>
+
 using namespace std;
-
-int Same = 0;
-vector <vector<vector<int>>> solutions;
-vector <vector<int>> mat;
-
-int tamanho;
-//pretos por linha
+vector<vector<int>> arrayNovo;
+vector<vector<int>> ArrayFinal;
+vector<int> combinacao;
+int N;
+// pretos por linha
 vector<int> lb;
-//pretos por coluna
+// pretos por coluna
 vector<int> cb;
-//transicoes por linha
+// transicoes por linha
 vector<int> lt;
-//transicoes por coluna
-vector <int> ct;
-//pretos por quadrante
+// transicoes por coluna
+vector<int> ct;
+// pretos por quadrante
 vector<int> qb;
-//pretos por diagonal
+// pretos por diagonal
 vector<int> db;
+
+int contadorQRcode = 0;
 
 int retornaQuadrante(int linha, int coluna)
 {
-	int a = floor(tamanho/2);
-	// printf("Linha %d, coluna %d  e floor %d\n", linha, coluna, a);
-	if (linha <= a && coluna > a)
-	{
-		return 1;
-	}
-	if (linha <= a && coluna <= a)
-	{
-		return 2;
-	}
-	if (linha > a && coluna <= a)
-	{
-		return 3;
-	}
-	if (linha > a && coluna > a)
-	{
-		return 4;
-	}
-	return 0;
+    int a = floor(N / 2);
+
+    if (linha <= a && coluna > a)
+    {
+
+        return 1;
+    }
+    if (linha <= a && coluna <= a)
+    {
+        return 2;
+    }
+    if (linha > a && coluna <= a)
+    {
+
+        return 3;
+    }
+    if (linha > a && coluna > a)
+    {
+
+        return 4;
+    }
+    return 0;
 }
 void LeituraQrCode(int size)
 {
-	int valor, i;
-	for (i = 0; i < size; i++)
-	{
-		cin >> valor;
-		lb.push_back(valor);
-	}
-	for (i = 0; i < size; i++)
-	{
-		cin >> valor;
+    int valor, i;
+    for (i = 0; i < size; i++)
+    {
+        cin >> valor;
+        lb.push_back(valor);
+    }
+    for (i = 0; i < size; i++)
+    {
+        cin >> valor;
         cb.push_back(valor);
-	}
-	for (i = 0; i < size; i++)
-	{
-		cin >> valor;
-		lt.push_back(valor);
-	}
-	for (i = 0; i < size; i++)
-	{
-		cin >> valor;
-		ct.push_back(valor);
-	}
-	for (i = 0; i < 4; i++)
-	{
-		cin >> valor;
-		qb.push_back(valor);
-	}
-	for (i = 0; i < 2; i++)
-	{
-		cin >> valor;
-		db.push_back(valor);
-	}
+    }
+    for (i = 0; i < size; i++)
+    {
+        cin >> valor;
+        lt.push_back(valor);
+    }
+    for (i = 0; i < size; i++)
+    {
+        cin >> valor;
+        ct.push_back(valor);
+    }
+    for (i = 0; i < 4; i++)
+    {
+        cin >> valor;
+        qb.push_back(valor);
+    }
+    for (i = 0; i < 2; i++)
+    {
+        cin >> valor;
+        db.push_back(valor);
+    }
 }
 
-void imprimeQRCode(int tam){
-    cout << "VALID: 1 QR code generated!\n";
-	cout << "+";
-	for (int i = 0; i < tam; i++)
-	{
-		cout << "-";
-	}
-	cout << "+\n";
-	for (int i = 0; i < tam; i++)
-	{
-		cout << "|";
-		for (int k = 0; k < tam; k++)
-		{
-			if (mat[i][k] == 0)
-			{
-				cout << " ";
-			}
-			if (mat[i][k] == 1)
-			{
-				cout << "#";
-			}
-			if (mat[i][k] == 2)
-			{
-				cout << "_";
-			}
-		}
-
-		cout << "|\n";
-	}
-	cout << "+";
-	for (int i = 0; i < tam; i++)
-	{
-		cout << "-";
-	}
-	cout << "+\n";
-}
-
-int contarPretosLinha(int l){
-	int count=0;
-	for (int c=0;c<tamanho;c++){
-		if (mat[l][c]==1) count+=1;
-	}
-	return count;
-}
-
-int contarPretosColuna(int c){
-	int count=0;
-	for (int l=0;l<tamanho;l++){
-		if (mat[l][c]==1) count+=1;
-	}
-	return count;
-}
-
-int contarPretosTransicaoLinha(int l){
-	int count=0;
-	for (int c=0;c<tamanho-1;c++){
-		if ((mat[l][c]==0 && mat[l][c+1]==1) ||(mat[l][c+1]==0 && mat[l][c]==1)) count++;
-	}
-	return count;
-}
-
-int contarPretosTransicaoColuna(int c){
-	int count=0;
-	for (int l=0;l<tamanho-1;l++){
-		if ((mat[l][c]==0 && mat[l+1][c]==1) ||(mat[l+1][c]==0 && mat[l][c]==1)) count++;
-	}
-	return count;
-}
-
-bool contarPretosQuadrante(int l, int c){
-	int count=0;
-	int quadrante= retornaQuadrante(l,c);
-
-	int a= floor(tamanho/2);
-
-	for (int i=0;i<tamanho;i++){
-		for (int j=0;j<tamanho;j++){
-			if(quadrante==1 && i<=a && j>a && mat[i][j]==1){
-				count+=1;
-			}
-
-			else if (quadrante==2 && i<=a && j<=a && mat[i][j]==1){
-				count+=1;
-			}
-
-			else if (quadrante==3 && i>a && j<=a && mat[i][j]==1){
-				count+=1;
-			}
-
-			else if (quadrante==4 && i>a && j>a && mat[i][j]==1){
-				count+=1;
-			}
-		}
-	}
-
-	//quadrante 1 ocupa posicao 0
-	return count<=qb[quadrante-1];
-
-}
-
-bool contarPretosDiagonal(int l, int c){
-	int count=0;
-	int count_=0;
-	bool fl=false;
-	if (l==c && tamanho-l+1==c){
-		for (int i=0;i<tamanho;i++){
-			if (mat[i][i]==1) count++;
-			if(mat[tamanho-i-1][i]==1) count_++;
-		}
-		return (count<=db[0] && count_<=db[1]);
-	}
-	//pertence a diagonal principal
-	else if (l==c){
-		for (int i=0;i<tamanho;i++){
-			if (mat[i][i]==1) count++;
-		}
-		return count<=db[0];
-	}
-	else if(tamanho-l+1==c){
-			for (int i=0;i<tamanho;i++){
-				if (mat[tamanho-i-1][i]==1) count++;
-			}
-			return count<=db[1];
-	}
-	else return true;
-}
-
-bool validarElemento(int l, int c){
-	bool flag;
-    // se todas as condições se verificarem o elemento é valido para ficar preto
-	mat[l][c]=1;
-    flag = contarPretosLinha(l)<=lb[l] && contarPretosTransicaoLinha(l)<=lt[l] && contarPretosColuna(c)<=cb[c] && contarPretosTransicaoColuna(c)<=ct[c]
-	&& contarPretosQuadrante(l,c) && contarPretosDiagonal(l,c);
-	mat[l][c]=0;
-	return flag;
-
-}
-
-bool verificacaoFinal()
+int somador(int array[], int tam)
 {
-	int teste;
-	for (int i=0;i<tamanho;i++){
-		if((teste=contarPretosLinha(i))!=lb[i]) return false;
-		if((teste=contarPretosColuna(i))!=cb[i]) return false;
-		if((teste=contarPretosTransicaoColuna(i))!=ct[i]) return false;
-		if(teste=(contarPretosTransicaoLinha(i)!=lt[i])) return false;
-	}
-	return true;
+    int soma = 0;
+    for (int i = 0; i < tam; i++)
+    {
+        soma += array[tam];
+    }
+    cout << soma << endl;
+    return soma;
 }
 
+/*
+Verifica se o nº de pretos em todas as linhas dá o mesmo que os quadrantes todos juntos.
+Verifica se o nº de pretos em todas as colunas dá o mesmo que os quadrantes todos juntos.
+*/
+bool verificacaoFinal(vector<vector<int>> &array, int num)
+{
+    int arrayqb[4] = {0, 0, 0, 0};
+    for (int col = 0; col < num; col++)
+    {
+        int somaCB = 0, somaCT = 0;
+        for (int i = 0; i < num; i++)
+        {
+            int quadrante = retornaQuadrante(col + 1, i + 1);
 
-void procurar_qr_codes(int l,int c, int size_max){
-	if (c==size_max-1 && l==size_max-1){
-		if(mat[l][c]==0 && validarElemento(l,c)){
-			//cout << "encontrou" << "\n";
-			mat[l][c]=1;
-			solutions.push_back(mat);
-			mat[l][c]=0;
-			return;
-		}
-		//solutions.push_back(mat);
-		return;
-	}
-	
-    for (int i=0;i<size_max;i++){
-        for (int j=0;j<size_max;j++){
-			if (mat[i][j]==0 && validarElemento(i,j)){
-				mat[i][j]=1;
+            if (array[col][i] == 1)
+            {
+                arrayqb[quadrante - 1]++;
+            }
+            if (array[i][col] == 1)
+            {
+                somaCB += 1;
+            }
+            if (i != num - 1)
+            {
+                if (array[i][col] != array[i + 1][col])
+                {
+                    somaCT += 1;
+                }
+            }
+        }
 
-				procurar_qr_codes(i,j+1,size_max);
+        if (somaCB != cb[col] || somaCT != ct[col])
+        {
 
-				mat[i][j]=0;
-			}
+            return false;
+        }
+    }
+
+    return (arrayqb[0] == qb[0] && arrayqb[1] == qb[1] && arrayqb[2] == qb[2] && arrayqb[3] == qb[3]);
+}
+
+bool verificacaoTransicoes(vector<int> &array, int num, int linha)
+{
+    int somaCB = 0, somaCT = 0;
+    for (int i = 0; i < num; i++)
+    {
+
+        if (array[i] == 1)
+        {
+            somaCB += 1;
+        }
+        if (i != num - 1)
+        {
+            if (array[i] != array[i + 1])
+            {
+                somaCT += 1;
+            }
+        }
+    }
+    if (somaCB != lb[linha] || somaCT != lt[linha])
+    {
+
+        return false;
+    }
+    return true;
+}
+
+bool verificacaoAMEIO(vector<vector<int>> &array, int num, int col)
+{
+    int soma = 0;
+    for (int i = 0; i < num; i++)
+    {
+        soma += array[i][col];
+    }
+
+    if (soma < cb[col])
+    {
+        return true;
+    }
+    return false;
+}
+
+void preenche(int array[30][30], int tam)
+{
+    for (int i = 0; i < tam; i++)
+    {
+        for (int k = 0; k < tam; k++)
+        {
+            array[i][k] = 0;
         }
     }
 }
 
+void imprimeQRcode(vector<vector<int>> &array, int tam)
+{
+    cout << "VALID: 1 QR code generated!\n";
+    cout << "+";
+    for (int i = 0; i < tam; i++)
+    {
+        cout << "-";
+    }
+    cout << "+\n";
+    for (int i = 0; i < tam; i++)
+    {
+        cout << "|";
+        for (int k = 0; k < tam; k++)
+        {
+            if (array[i][k] == 0)
+            {
+                cout << " ";
+            }
+            if (array[i][k] == 1)
+            {
+                cout << "#";
+            }
+            if (array[i][k] == 2)
+            {
+                cout << "_";
+            }
+        }
+
+        cout << "|\n";
+    }
+    cout << "+";
+    for (int i = 0; i < tam; i++)
+    {
+        cout << "-";
+    }
+    cout << "+\n";
+}
+
+bool contarPretosDiagonal(vector<vector<int>> &mat, int k)
+{
+    int count = 0;
+    int count2 = 0;
+
+    for (int i = 0; i < k; i++)
+    {
+        if (mat[i][i] == 1)
+        {
+            count++;
+        }
+        if (mat[N - i - 1][i] == 1)
+        {
+            count2++;
+        }
+    }
+
+    return count == db[0] && count2 == db[1];
+}
+void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec);
+void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados, vector<int>& combinacao, vector<vector<int>>&vec) {
+    if (posicao == num_quadrados) {
+        if (combinacao.size() == num_pretos) {
+            vector <int> new_combinacao;
+            for (int i = 0; i < num_quadrados; i++) {
+                if (find(combinacao.begin(), combinacao.end(), i) != combinacao.end()) {
+                    new_combinacao.push_back(1);
+                } else {
+                    new_combinacao.push_back(0);
+                }
+            }
+            ConstroiMatriz(linha,new_combinacao,vec);
+            return;
+
+        }
+        return;
+    }
+    combinacao.push_back(posicao);
+    gerar_combinacoes(linha,posicao+1, num_pretos, num_quadrados, combinacao,vec);
+    combinacao.pop_back();
+    gerar_combinacoes(linha,posicao+1, num_pretos, num_quadrados, combinacao,vec);
+}
+void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
+{
+	vector<int> comb;
+    vector <vector<int>> combs;
+
+	gerar_combinacoes(linha,0,lb[linha],N,comb,vec);
+}
+
+void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec)
+{
+
+    if (!verificacaoTransicoes(combination, N, linha))
+    {
+
+        return;
+    }
+    else
+    {
+        vec[linha] = combination;
+        if (linha == N - 1)
+        {
+
+            if (verificacaoFinal(vec, N) && contarPretosDiagonal(vec, N))
+            {
+                ArrayFinal = vec;
+
+                contadorQRcode++;
+            }
+
+            return;
+        }
+        gerador(lb[linha + 1], linha + 1, 0, N - 1, combination, vec);
+    }
+}
 
 int main()
 {
-	int numeroQR;
-	cin >> numeroQR;
+    int numeroQR;
+    cin >> numeroQR;
 
-	for (int i = 0; i < numeroQR; i++)
-	{
+    for (int i = 0; i < numeroQR; i++)
+    {
+        contadorQRcode = 0;
+        int numero;
+        cin >> numero;
 
-        //so para testar
-		Same = 1;
-		int numero;
-		cin >> numero;
-		// int array[tamanho][tamanho];
-		tamanho = numero;
+        arrayNovo = vector<vector<int>>(numero, vector<int>(numero, 0));
+        ArrayFinal = vector<vector<int>>(numero, vector<int>(numero, 0));
 
-        mat=vector <vector<int>> (tamanho,(tamanho,vector<int>(tamanho,0)));
-		
-		
+        N = numero;
 
-		
-        LeituraQrCode(numero);
+        int linha = 0;
 
-        procurar_qr_codes(0,0,tamanho);
+        vector<int> combinacao(N, 0);
+        LeituraQrCode(N);
 
-		if(solutions.size()==1){
-			mat=solutions[0];
-			imprimeQRCode(tamanho);
-		}
-		else if (solutions.size()>1){
-			for (int i=0;i<solutions.size();i++){
-				mat=solutions[i];
-				imprimeQRCode(tamanho);
-				cout << endl<<endl;
-			}
-			printf("INVALID: %ld QR Codes generated!\n", solutions.size());
-		}
-		else{
-			printf("DEFECT: No QR code generated!\n");
-		}
-	
-	}
+        // printf("LINHA: %d and N %d\n", lb[N - 1], N);
+        gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
+        if (contadorQRcode == 1)
+        {
+            imprimeQRcode(ArrayFinal, numero);
+        }
+        else if (contadorQRcode > 1)
+        {
+            printf("INVALID: %d QR Codes generated!\n", contadorQRcode);
+        }
+        else
+        {
+            printf("DEFECT: No QR code generated!\n");
+        }
+        lb.clear();
+        lt.clear();
+        cb.clear();
+        ct.clear();
+        qb.clear();
+        db.clear();
+    }
 
-	return 0;
+    return 0;
 }
