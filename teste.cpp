@@ -272,8 +272,29 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 {
 	vector<int> comb;
     vector <vector<int>> combs;
+    
+    if(N==preto){
+        comb=vector <int> (N,1);
+        ConstroiMatriz(linha,comb,vec);
+        return;
+    }
 
-	gerar_combinacoes(linha,0,lb[linha],N,comb,vec);
+    if (lt[linha]==1 && preto==N-1){
+        comb=vector<int> (N,1);
+
+        //0 fim
+        comb[N-1]=0;
+        ConstroiMatriz(linha,comb,vec);
+
+        //0 inicio
+        comb[0]=0;
+        ConstroiMatriz(linha,comb,vec);
+    }
+
+    else{
+        gerar_combinacoes(linha,0,lb[linha],N,comb,vec);
+    }
+
 }
 
 void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec)
