@@ -23,7 +23,7 @@ vector<int> qb;
 vector<int> db;
 
 int contadorQRcode = 0;
-
+int gera = 0;
 int retornaQuadrante(int linha, int coluna)
 {
     int a = floor(N / 2);
@@ -82,17 +82,6 @@ void LeituraQrCode(int size)
         cin >> valor;
         db.push_back(valor);
     }
-}
-
-int somador(int array[], int tam)
-{
-    int soma = 0;
-    for (int i = 0; i < tam; i++)
-    {
-        soma += array[tam];
-    }
-    cout << soma << endl;
-    return soma;
 }
 
 /*
@@ -177,20 +166,9 @@ bool verificacaoAMEIO(vector<vector<int>> &array, int num, int col)
     return false;
 }
 
-void preenche(int array[30][30], int tam)
-{
-    for (int i = 0; i < tam; i++)
-    {
-        for (int k = 0; k < tam; k++)
-        {
-            array[i][k] = 0;
-        }
-    }
-}
-
 void imprimeQRcode(vector<vector<int>> &array, int tam)
 {
-    cout << "VALID: 1 QR code generated!\n";
+    cout << "VALID: 1 QR Code generated!\n";
     cout << "+";
     for (int i = 0; i < tam; i++)
     {
@@ -245,56 +223,115 @@ bool contarPretosDiagonal(vector<vector<int>> &mat, int k)
 
     return count == db[0] && count2 == db[1];
 }
+
+bool verificaAmeioCombinacoes(int linha, vector<int> &combinacao)
+{
+    if (combinacao.size() == 0)
+    {
+        return true;
+    }
+    int falta = N - combinacao.size();
+    int contaP = 0, contaT = 0;
+    for (int i = 0; i < combinacao.size() - 1; i++)
+    {
+
+        if (combinacao[i] == 1)
+        {
+            contaP += 1;
+        }
+        if (i != combinacao.size() - 1)
+        {
+            if (combinacao[i] != combinacao[i + 1])
+            {
+                contaT += 1;
+            }
+        }
+    }
+
+    return (falta - (lb[linha] - contaP) >= 0 || ((falta - 1) - (lt[linha] - contaT) >= 0));
+}
+
 void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec);
-void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados, vector<int>& combinacao, vector<vector<int>>&vec) {
-    if (posicao == num_quadrados) {
-        if (combinacao.size() == num_pretos) {
-            vector <int> new_combinacao;
-            for (int i = 0; i < num_quadrados; i++) {
-                if (find(combinacao.begin(), combinacao.end(), i) != combinacao.end()) {
+
+void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados, vector<int> &combinacao, vector<vector<int>> &vec)
+{
+    if (posicao == num_quadrados)
+    {
+        if (combinacao.size() == num_pretos)
+        {
+
+            vector<int> new_combinacao;
+            for (int i = 0; i < num_quadrados; i++)
+            {
+                if (find(combinacao.begin(), combinacao.end(), i) != combinacao.end())
+                {
                     new_combinacao.push_back(1);
-                } else {
+                }
+                else
+                {
                     new_combinacao.push_back(0);
                 }
             }
-            ConstroiMatriz(linha,new_combinacao,vec);
-            return;
 
+            ConstroiMatriz(linha, new_combinacao, vec);
+
+            return;
         }
         return;
     }
-    combinacao.push_back(posicao);
-    gerar_combinacoes(linha,posicao+1, num_pretos, num_quadrados, combinacao,vec);
-    combinacao.pop_back();
-    gerar_combinacoes(linha,posicao+1, num_pretos, num_quadrados, combinacao,vec);
+
+    gera++;
+
+    if (verificaAmeioCombinacoes(linha, combinacao))
+    {
+        combinacao.push_back(posicao);
+
+        gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
+        combinacao.pop_back();
+        gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
+    }
 }
+
 void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
 {
-	vector<int> comb;
-    vector <vector<int>> combs;
-    
-    if(N==preto){
-        comb=vector <int> (N,1);
-        ConstroiMatriz(linha,comb,vec);
+    vector<int> comb;
+    vector<vector<int>> combs;
+
+    if (N == preto && inicio == 0)
+    {
+
+        comb = vector<int>(N, 1);
+        ConstroiMatriz(linha, comb, vec);
+
+        return;
+    }
+    if (preto == 0 && inicio == 0)
+    {
+        comb = vector<int>(N, 0);
+        ConstroiMatriz(linha, comb, vec);
         return;
     }
 
-    if (lt[linha]==1 && preto==N-1){
-        comb=vector<int> (N,1);
+    if (lt[linha] == 1 && preto == N - 1 && inicio == 0)
+    {
+        comb = vector<int>(N, 1);
 
-        //0 fim
-        comb[N-1]=0;
-        ConstroiMatriz(linha,comb,vec);
+        // 0 fim
+        comb[N - 1] = 0;
+        ConstroiMatriz(linha, comb, vec);
 
-        //0 inicio
-        comb[0]=0;
-        ConstroiMatriz(linha,comb,vec);
+        comb = vector<int>(N, 1);
+        // 0 inicio
+        comb[0] = 0;
+        ConstroiMatriz(linha, comb, vec);
+        return;
     }
 
-    else{
-        gerar_combinacoes(linha,0,lb[linha],N,comb,vec);
-    }
+    else
+    {
 
+        gerar_combinacoes(linha, 0, lb[linha], N, comb, vec);
+    }
 }
 
 void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec)
@@ -307,7 +344,9 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
     }
     else
     {
+
         vec[linha] = combination;
+
         if (linha == N - 1)
         {
 
@@ -357,8 +396,9 @@ int main()
         }
         else
         {
-            printf("DEFECT: No QR code generated!\n");
+            printf("DEFECT: No QR Code generated!\n");
         }
+        // printf("GERA: %d\n", gera);
         lb.clear();
         lt.clear();
         cb.clear();
