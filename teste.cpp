@@ -8,7 +8,7 @@ using namespace std;
 vector<vector<int>> arrayNovo;
 vector<vector<int>> ArrayFinal;
 vector<int> combinacao;
-vector <int> contagem_quadrante;
+vector<int> contagem_quadrante;
 int N;
 // pretos por linha
 vector<int> lb;
@@ -263,14 +263,14 @@ void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados
         if (combinacao.size() == num_pretos)
         {
 
-            vector<int> new_combinacao = vector <int> (N,0);
-            for (int i = 0; i <combinacao.size(); i++)
+            vector<int> new_combinacao = vector<int>(N, 0);
+            for (int i = 0; i < combinacao.size(); i++)
             {
-                     new_combinacao[combinacao[i]]=1;
+                new_combinacao[combinacao[i]] = 1;
             }
 
             ConstroiMatriz(linha, new_combinacao, vec);
-        
+
             // return;
         }
         return;
@@ -278,13 +278,14 @@ void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados
 
     gera++;
 
-    
-    if(posicao+1<N && cb[posicao+1]==0){
-        if(posicao+2<=N-1){
+    if (posicao + 1 < N && cb[posicao + 1] == 0)
+    {
+        if (posicao + 2 <= N - 1)
+        {
             combinacao.push_back(posicao);
-            gerar_combinacoes(linha,posicao+2,num_pretos,num_quadrados,combinacao,vec);
+            gerar_combinacoes(linha, posicao + 2, num_pretos, num_quadrados, combinacao, vec);
             combinacao.pop_back();
-            gerar_combinacoes(linha,posicao+2,num_pretos,num_quadrados,combinacao,vec);
+            gerar_combinacoes(linha, posicao + 2, num_pretos, num_quadrados, combinacao, vec);
         }
     }
 
@@ -365,7 +366,6 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
         //     if (combination[i]==1) contagem_quadrante[retornaQuadrante(linha,i)-1]+=1;
         // }
 
-        
         // //verifica-se quadrante 1 e 2
         // if (linha==(int)N/2){
         //     //impossivel continuar
@@ -385,7 +385,7 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
                 contadorQRcode++;
             }
 
-            contagem_quadrante = vector <int> (4,0);
+            contagem_quadrante = vector<int>(4, 0);
             return;
         }
         gerador(lb[linha + 1], linha + 1, 0, N - 1, combination, vec);
@@ -405,7 +405,7 @@ int main()
 
         arrayNovo = vector<vector<int>>(numero, vector<int>(numero, 0));
         ArrayFinal = vector<vector<int>>(numero, vector<int>(numero, 0));
-        contagem_quadrante=vector<int> (4,0);
+        contagem_quadrante = vector<int>(4, 0);
 
         N = numero;
 
