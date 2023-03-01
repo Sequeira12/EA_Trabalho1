@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
 vector<vector<int>> arrayNovo;
@@ -254,39 +255,52 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
 void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados, vector<int> &combinacao, vector<vector<int>> &vec)
 {
-    if (posicao == num_quadrados)
-    {
-        if (combinacao.size() == num_pretos)
-        {
-
-            vector<int> new_combinacao;
-            for (int i = 0; i < num_quadrados; i++)
-            {
-                if (find(combinacao.begin(), combinacao.end(), i) != combinacao.end())
-                {
-                    new_combinacao.push_back(1);
-                }
-                else
-                {
-                    new_combinacao.push_back(0);
-                }
-            }
-
-            ConstroiMatriz(linha, new_combinacao, vec);
-        }
-        return;
+    combinacao=vector<int> (N,0);
+    for (int i=0;i<num_pretos;i++){
+        combinacao[i]=1;
     }
+    do {
+        ConstroiMatriz(linha,combinacao,vec);
+    } while (prev_permutation(combinacao.begin(),combinacao.end()));
+    // if (posicao == num_quadrados)
+    // {
+    //     if (combinacao.size() == num_pretos)
+    //     {
 
-    gera++;
+    //         vector<int> new_combinacao;
+    //         for (int i = 0; i < num_quadrados; i++)
+    //         {
+    //             if (find(combinacao.begin(), combinacao.end(), i) != combinacao.end())
+    //             {
+    //                 new_combinacao.push_back(1);
+    //             }
+    //             else
+    //             {
+    //                 new_combinacao.push_back(0);
+    //             }
+    //         }
 
-    if (verificaAmeioCombinacoes(linha, combinacao))
-    {
-        combinacao.push_back(posicao);
+    //         ConstroiMatriz(linha, new_combinacao, vec);
+    //     }
+    //     return;
+    // }
 
-        gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
-        combinacao.pop_back();
-        gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
-    }
+    // gera++;
+
+    //  if (posicao + 1 < N && cb[posicao + 1] == 0)
+    // {
+    //     //gera combinacao só com o 0
+    //     gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
+    // }
+
+    // else if (verificaAmeioCombinacoes(linha, combinacao))
+    // {
+    //     combinacao.push_back(posicao);
+
+    //     gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
+    //     combinacao.pop_back();
+    //     gerar_combinacoes(linha, posicao + 1, num_pretos, num_quadrados, combinacao, vec);
+    // }
 }
 
 void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
@@ -349,22 +363,23 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         comb[0] = 0;
         ConstroiMatriz(linha, comb, vec);
     }
-    else if (preto == N - 2 && lt[linha] == 4 && inicio == 0)
-    {
+    // else if (preto == N - 2 && lt[linha] == 4 && inicio == 0)
+    // {
 
-        for (int i = 1; i < N - 3; i++)
-        {
-            comb = vector<int>(N, 1);
-            comb[i] = 0;
-            for (int j = i + 2; j < N - 1; j++)
-            {
-                comb[i] = 0;
-                comb[j] = 0;
+    //     for (int i = 1; i < N - 3; i++)
+    //     {
+    //         comb = vector<int>(N, 1);
+    //         comb[i] = 0;
+    //         for (int j = i + 2; j < N - 1; j++)
+    //         {
+    //             comb[i] = 0;
+    //             comb[j] = 0;
 
-                ConstroiMatriz(linha, comb, vec);
-            }
-        }
-    }
+    //             ConstroiMatriz(linha, comb, vec);
+    //         }
+    //     }
+    // }
+
     else if (preto == N - 1 && inicio == 0)
     {
 
@@ -437,6 +452,7 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
 int main()
 {
+    auto start = std::chrono::high_resolution_clock::now();
     int numeroQR;
     cin >> numeroQR;
 
@@ -471,6 +487,10 @@ int main()
             printf("DEFECT: No QR Code generated!\n");
         }
 
+        auto stop=std::chrono::high_resolution_clock::now();
+        auto duration=std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
+        cout << duration.count()<<endl;
+
         lb.clear();
         lt.clear();
         cb.clear();
@@ -478,6 +498,5 @@ int main()
         qb.clear();
         db.clear();
     }
-
     return 0;
 }
