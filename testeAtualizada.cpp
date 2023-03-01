@@ -88,7 +88,7 @@ void LeituraQrCode(int size)
 Verifica se o nº de pretos em todas as linhas dá o mesmo que os quadrantes todos juntos.
 Verifica se o nº de pretos em todas as colunas dá o mesmo que os quadrantes todos juntos.
 */
-bool verificacaoFinal(vector<vector<int>> &array, int num)
+bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 {
     int arrayqb[4] = {0, 0, 0, 0};
     for (int col = 0; col < num; col++)
@@ -121,7 +121,6 @@ bool verificacaoFinal(vector<vector<int>> &array, int num)
             return false;
         }
     }
-
     return (arrayqb[0] == qb[0] && arrayqb[1] == qb[1] && arrayqb[2] == qb[2] && arrayqb[3] == qb[3]);
 }
 
@@ -274,8 +273,6 @@ void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados
             }
 
             ConstroiMatriz(linha, new_combinacao, vec);
-
-            return;
         }
         return;
     }
@@ -308,27 +305,34 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         comb = vector<int>(N, 0);
         ConstroiMatriz(linha, comb, vec);
     }
-    // caso 1 preto com duas transicoes (01000)
-    else if (preto == 1 && lt[linha] == 2)
+    // caso 1 preto com duas transicoes(01000)
+    else if (preto == 1 && lt[linha] == 2 && inicio == 0)
     {
         comb = vector<int>(N, 0);
-        for (int i = 1; i < N - 1; i++)
+        for (int i = 1; i < N; i++)
         {
             comb[i] = 1;
+
             ConstroiMatriz(linha, comb, vec);
+
             comb[i] = 0;
         }
+        return;
     }
-    else if (preto == 2 && lt[linha] == 4)
+    else if (preto == 2 && lt[linha] == 4 && inicio == 0)
     {
         comb = vector<int>(N, 0);
         for (int i = 1; i < N - 2; i++)
         {
-            comb[i] = 1;
-            comb[i + 2] = 1;
-            ConstroiMatriz(linha, comb, vec);
-            comb[i] = 0;
-            comb[i + 2] = 0;
+            comb = vector<int>(N, 0);
+            for (int j = i + 2; j < N; j++)
+            {
+                comb[i] = 1;
+                comb[j] = 1;
+                ConstroiMatriz(linha, comb, vec);
+                comb[i] = 0;
+                comb[j] = 0;
+            }
         }
     }
 
@@ -345,7 +349,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         comb[0] = 0;
         ConstroiMatriz(linha, comb, vec);
     }
-    else if (preto == N - 2 && lt[linha] == 4)
+    else if (preto == N - 2 && lt[linha] == 4 && inicio == 0)
     {
 
         for (int i = 1; i < N - 3; i++)
@@ -358,12 +362,10 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
                 comb[j] = 0;
 
                 ConstroiMatriz(linha, comb, vec);
-                comb[j] = 1;
-                comb[i] = 1;
             }
         }
     }
-    else if (preto == N - 1)
+    else if (preto == N - 1 && inicio == 0)
     {
 
         if (lt[linha] == 2)
@@ -377,7 +379,6 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
                 comb[i] = 0;
                 ConstroiMatriz(linha, comb, vec);
             }
-            return;
         }
 
         else if (lt[linha] == 1)
@@ -414,14 +415,12 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
     }
     else
     {
-
         vec[linha] = combination;
 
         if (linha == N - 1)
         {
-            //  imprimeQRcode(vec, N);
 
-            if (verificacaoFinal(vec, N) && contarPretosDiagonal(vec, N))
+            if (verificacaoFinal(vec, N, 1) && contarPretosDiagonal(vec, N))
             {
 
                 ArrayFinal = vec;
@@ -431,6 +430,7 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
             return;
         }
+
         gerador(lb[linha + 1], linha + 1, 0, N - 1, combination, vec);
     }
 }
