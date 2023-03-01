@@ -22,6 +22,10 @@ vector<int> ct;
 vector<int> qb;
 // pretos por diagonal
 vector<int> db;
+
+vector<int> colunasP;
+vector<int> QuadrantesP;
+
 int conta = 0;
 int contadorQRcode = 0;
 int gera = 0;
@@ -127,27 +131,40 @@ bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 
 bool verificacaoTransicoes(vector<int> &array, int num, int linha)
 {
-    int somaCB = 0, somaCT = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        if (qb[i] < QuadrantesP[i])
+            return false;
+    }
+
+    int somaLB = 0, somaLT = 0, somaCP = 0, somaCT = 0;
     for (int i = 0; i < num; i++)
     {
+        if (colunasP[i] > cb[i])
+        {
+
+            return false;
+        }
 
         if (array[i] == 1)
         {
-            somaCB += 1;
+
+            somaLB += 1;
         }
         if (i != num - 1)
         {
             if (array[i] != array[i + 1])
             {
-                somaCT += 1;
+                somaLT += 1;
             }
         }
     }
-    if (somaCB != lb[linha] || somaCT != lt[linha])
+    if (somaLB != lb[linha] || somaLT != lt[linha])
     {
 
         return false;
     }
+
     return true;
 }
 
@@ -255,13 +272,15 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
 void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados, vector<int> &combinacao, vector<vector<int>> &vec)
 {
-    combinacao=vector<int> (N,0);
-    for (int i=0;i<num_pretos;i++){
-        combinacao[i]=1;
+    combinacao = vector<int>(N, 0);
+    for (int i = 0; i < num_pretos; i++)
+    {
+        combinacao[i] = 1;
     }
-    do {
-        ConstroiMatriz(linha,combinacao,vec);
-    } while (prev_permutation(combinacao.begin(),combinacao.end()));
+    do
+    {
+        ConstroiMatriz(linha, combinacao, vec);
+    } while (prev_permutation(combinacao.begin(), combinacao.end()));
     // if (posicao == num_quadrados)
     // {
     //     if (combinacao.size() == num_pretos)
@@ -305,6 +324,10 @@ void gerar_combinacoes(int linha, int posicao, int num_pretos, int num_quadrados
 
 void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
 {
+    if (linha == N)
+    {
+        return;
+    }
     vector<int> comb;
     vector<vector<int>> combs;
 
@@ -423,14 +446,40 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec)
 {
 
-    if (!verificacaoTransicoes(combination, N, linha))
+    for (int i = 0; i < combination.size(); i++)
     {
 
-        return;
+        if (combination[i] == 1)
+        {
+            QuadrantesP[retornaQuadrante(linha + 1, i + 1) - 1]++;
+            colunasP[i]++;
+        }
+    }
+
+    if (!verificacaoTransicoes(combination, N, linha))
+    {
+        for (int i = 0; i < combination.size(); i++)
+        {
+            if (combination[i] == 1)
+            {
+                QuadrantesP[retornaQuadrante(linha + 1, i + 1) - 1]--;
+                colunasP[i]--;
+            }
+        }
     }
     else
     {
         vec[linha] = combination;
+        /*printf("\nLinha:%d C:", linha);
+
+        for (int i = 0; i < combination.size(); i++)
+        {
+            printf("[%d]\t", colunasP[i]);
+            printf("%d\t", combination[i]);
+        }
+        printf("\n");
+        */
+        // imprimeQRcode(vec, N);
 
         if (linha == N - 1)
         {
@@ -442,12 +491,25 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
                 contadorQRcode++;
             }
+            colunasP = vector<int>(N, 0);
+            QuadrantesP = vector<int>(N, 0);
 
             return;
         }
-
+        // printf("OLA\n");
         gerador(lb[linha + 1], linha + 1, 0, N - 1, combination, vec);
+        /* for (int i = 0; i < combination.size(); i++)
+         {
+             if (combination[i] == 1)
+             {
+                 colunasP[i]--;
+             }
+         }
+         */
+        QuadrantesP = vector<int>(N, 0);
+        colunasP = vector<int>(N, 0);
     }
+    return;
 }
 
 int main()
@@ -471,7 +533,8 @@ int main()
 
         vector<int> combinacao(N, 0);
         LeituraQrCode(N);
-
+        colunasP = vector<int>(N, 0);
+        QuadrantesP = vector<int>(N, 0);
         // printf("LINHA: %d and N %d\n", lb[N - 1], N);
         gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
         if (contadorQRcode == 1)
@@ -487,9 +550,9 @@ int main()
             printf("DEFECT: No QR Code generated!\n");
         }
 
-        auto stop=std::chrono::high_resolution_clock::now();
-        auto duration=std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
-        cout << duration.count()<<endl;
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        cout << duration.count() << endl;
 
         lb.clear();
         lt.clear();
