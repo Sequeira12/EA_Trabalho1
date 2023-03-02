@@ -1,2 +1,10 @@
-INVALID: 62 QR Codes generated!
-4
+VALID: 1 QR Code generated!
++-------+
+| ###   |
+|#### ##|
+|  #  # |
+| ## ###|
+|      #|
+|      #|
+|###### |
++-------+
