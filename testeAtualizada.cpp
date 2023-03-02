@@ -22,10 +22,11 @@ vector<int> ct;
 vector<int> qb;
 // pretos por diagonal
 vector<int> db;
-/*
+
 vector<int> colunasP;
 vector<int> diagonaisP;
-vector<int> QuadrantesP; */
+vector<int> QuadranteP;
+vector<int> colunasT;
 
 int conta = 0;
 int contadorQRcode = 0;
@@ -96,78 +97,26 @@ Verifica se o nº de pretos em todas as colunas dá o mesmo que os quadrantes to
 */
 bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 {
-    int arrayqb[4] = {0, 0, 0, 0};
-    int count = 0, count2 = 0;
-    for (int col = 0; col < num; col++)
+    for (int i = 0; i < N; i++)
     {
-        if (array[col][col] == 1)
-        {
-            count++;
-        }
-        if (array[N - col - 1][col] == 1)
-        {
-            count2++;
-        }
-        int somaCB = 0, somaCT = 0;
-        for (int i = 0; i < num; i++)
-        {
-
-            int quadrante = retornaQuadrante(col + 1, i + 1);
-
-            if (array[col][i] == 1)
-            {
-                arrayqb[quadrante - 1]++;
-            }
-            if (array[i][col] == 1)
-            {
-                somaCB += 1;
-            }
-            if (i != num - 1)
-            {
-                if (array[i][col] != array[i + 1][col])
-                {
-                    somaCT += 1;
-                }
-            }
-        }
-
-        if (somaCB != cb[col] || somaCT != ct[col])
-        {
-
+        if (colunasP[i] != cb[i])
             return false;
-        }
+        if (colunasT[i] != ct[i])
+            return false;
     }
-    // printf("%d %d\n", count, count2);
-    return (arrayqb[0] == qb[0] && arrayqb[1] == qb[1] && arrayqb[2] == qb[2] && arrayqb[3] == qb[3] && count == db[0] && count2 == db[1]);
+    return (QuadranteP[0] == qb[0] && QuadranteP[1] == qb[1] && QuadranteP[2] == qb[2] && QuadranteP[3] == qb[3] && diagonaisP[0] == db[0] && diagonaisP[1] == db[1]);
 }
 
-bool verificacaoTransicoes(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP, vector<int> colunasT, vector<int> &array, int num, int linha)
+bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 {
-    // n - linha - 1 - (db[0] - diagonaisP[0]) >= 0
-    int numero_total0 = N - linha - 1 - db[0] - diagonaisP[0];
-    int numero_total1 = N - linha - 1;  // numero total possiveis
-    int falta0 = db[0] - diagonaisP[0]; // numero que faltam pintar
-
-    int falta1 = db[1] - diagonaisP[1]; // numero que faltam pintar
-                                        // printf("Linha %d, %d %d\n", linha, numero_total1, falta0);
-
-    // COMPO ESTA CONDICAO
-    /*    if (diagonaisP[0] + N - linha - 1 < db[0] || diagonaisP[1] + N - linha - 1 < db[1])
-       {
-           if (db[1] != 0 && db[0] != 0 && diagonaisP[0] + N - linha - 1 != db[0] && diagonaisP[1] + N - linha - 1 != db[1])
-           {
-               return false;
-           }
-       }
-    */
-    if (diagonaisP[0] > db[0] || diagonaisP[1] > db[1])
+    if (diagonaisP[0] + N - linha - 1 < db[0] || diagonaisP[1] + N - linha - 1 < db[1])
     {
+        return false;
+    }
 
-        // printf("Line %d , diagonais %d  --> final%d \n", linha, diagonaisP[1], db[1]);
-        if (db[1] != 0 && db[0] != 0)
-        {
-            return false;
-        }
+    if (diagonaisP[0] > db[0] || diagonaisP[1] + N - linha - 1 < db[1])
+    {
+        return false;
     }
 
     for (int i = 0; i < 4; i++)
@@ -182,25 +131,22 @@ bool verificacaoTransicoes(vector<int> diagonaisP, vector<int> colunaP, vector<i
     int somaLB = 0, somaLT = 0, somaCP = 0, somaCT = 0;
     for (int i = 0; i < num; i++)
     {
-        int quadradosPossiveis = N - linha - 1;
-
-        //  printf("Linha: (%d) - > %d --t [%d] e total %d\n", linha, quadradosPossiveis, colunasT[i], ct[i]);
-        //  printf(" A DIFERENCA é: %d  e as possbilidade %d\n", (ct[i] - colunasT[i]), quadradosPossiveis);
         if (colunasT[i] > ct[i])
         {
             return false;
         }
 
-        if ((ct[i] - colunasT[i]) > quadradosPossiveis)
+        if (colunasT[i] + N - linha - 1 < ct[i])
         {
             return false;
         }
-        if (colunaP[i] > cb[i])
+
+        if (colunasP[i] > cb[i])
         {
             return false;
         }
-        //(1-0 == 1 < 5 - 1)
-        if (colunaP[i] + N - linha - 1 < cb[i])
+        // (1-0 == 1 < 5 - 1)
+        if (colunasP[i] + N - linha - 1 < cb[i])
         {
             return false;
         }
@@ -262,7 +208,13 @@ void imprimeQRcode(vector<vector<int>> &array, int tam)
             }
             if (array[i][k] == 1)
             {
+                // if(i==k){
+                //     cout << "(";
+                // }
                 cout << "#";
+                // if(i==k){
+                //     cout << ")";
+                // }
             }
             if (array[i][k] == 2)
             {
@@ -328,14 +280,11 @@ bool verificaAmeioCombinacoes(int linha, vector<int> &combinacao)
     return (falta - (lb[linha] - contaP) >= 0 || ((falta - 1) - (lt[linha] - contaT) >= 0));
 }
 
-void ConstroiMatriz(vector<int> diagonaisP, vector<int> colunasP, vector<int> QuadrantesP, vector<int> colunasT, int linha, vector<int> &combination, vector<vector<int>> &vec);
+void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec);
 
-void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP, vector<int> colunasT, int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
+void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
 {
-    if (linha == N)
-    {
-        return;
-    }
+
     vector<int> comb;
     vector<vector<int>> combs;
 
@@ -343,12 +292,12 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
     {
 
         comb = vector<int>(N, 1);
-        ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+        ConstroiMatriz(linha, comb, vec);
     }
     else if (preto == 0 && inicio == 0)
     {
         comb = vector<int>(N, 0);
-        ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+        ConstroiMatriz(linha, comb, vec);
     }
     // caso 1 preto com duas transicoes(01000)
     else if (preto == 1 && lt[linha] == 2 && inicio == 0)
@@ -358,7 +307,7 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
         {
             comb[i] = 1;
 
-            ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+            ConstroiMatriz(linha, comb, vec);
 
             comb[i] = 0;
         }
@@ -374,7 +323,7 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
             {
                 comb[i] = 1;
                 comb[j] = 1;
-                ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+                ConstroiMatriz(linha, comb, vec);
                 comb[i] = 0;
                 comb[j] = 0;
             }
@@ -387,30 +336,13 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
 
         // 0 fim
         comb[N - 1] = 0;
-        ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+        ConstroiMatriz(linha, comb, vec);
 
         comb = vector<int>(N, 1);
         // 0 inicio
         comb[0] = 0;
-        ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+        ConstroiMatriz(linha, comb, vec);
     }
-    /* else if (preto == N - 2 && lt[linha] == 4 && inicio == 0)
-    {
-
-        for (int i = 1; i < N - 3; i++)
-        {
-            comb = vector<int>(N, 1);
-            for (int j = i + 2; j < N - 1; j++)
-            {
-                comb[i] = 0;
-                comb[j] = 0;
-
-                ConstroiMatriz(linha, comb, vec);
-                comb = vector<int>(N, 1);
-            }
-        }
-    }
-    */
 
     else if (preto == N - 1 && inicio == 0)
     {
@@ -424,7 +356,7 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
             {
                 comb = vector<int>(N, 1);
                 comb[i] = 0;
-                ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+                ConstroiMatriz(linha, comb, vec);
             }
         }
 
@@ -433,7 +365,7 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
             comb = vector<int>(N, 1);
 
             comb[N - 1] = 0;
-            ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+            ConstroiMatriz(linha, comb, vec);
 
             comb[0] = 0;
 
@@ -442,7 +374,7 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
                 comb[i] = 1;
             }
 
-            ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+            ConstroiMatriz(linha, comb, vec);
         }
     }
     else
@@ -455,13 +387,17 @@ void gerador(vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP
         }
         do
         {
-            ConstroiMatriz(diagonaisP, colunaP, QuadranteP, colunasT, linha, comb, vec);
+            ConstroiMatriz(linha, comb, vec);
         } while (prev_permutation(comb.begin(), comb.end()));
     }
 }
 
-void ConstroiMatriz(vector<int> diagonaisP, vector<int> colunasP, vector<int> QuadrantesP, vector<int> colunasT, int linha, vector<int> &combination, vector<vector<int>> &vec)
+void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec)
 {
+    if (combination[linha] == 1)
+        diagonaisP[0]++;
+    if (combination[N - linha - 1] == 1)
+        diagonaisP[1]++;
 
     for (int i = 0; i < combination.size(); i++)
     {
@@ -476,28 +412,23 @@ void ConstroiMatriz(vector<int> diagonaisP, vector<int> colunasP, vector<int> Qu
         if (combination[i] == 1)
         {
 
-            if (linha == i)
-            {
-                diagonaisP[0]++;
-            }
-            if (N - linha + 1 == i)
-            {
-                diagonaisP[1]++;
-            }
-
             if (linha != 0)
             {
                 if (vec[linha - 1][i] == 0)
                     colunasT[i] += 1;
             }
 
-            QuadrantesP[retornaQuadrante(linha + 1, i + 1) - 1]++;
+            QuadranteP[retornaQuadrante(linha + 1, i + 1) - 1]++;
             colunasP[i]++;
         }
     }
 
-    if (!verificacaoTransicoes(diagonaisP, colunasP, QuadrantesP, colunasT, combination, N, linha))
+    if (!verificacaoCombinacao(combination, N, linha))
     {
+        if (combination[linha] == 1)
+            diagonaisP[0]--;
+        if (combination[N - linha - 1] == 1)
+            diagonaisP[1]--;
         for (int i = 0; i < combination.size(); i++)
         {
             if (combination[i] == 0)
@@ -511,31 +442,22 @@ void ConstroiMatriz(vector<int> diagonaisP, vector<int> colunasP, vector<int> Qu
             if (combination[i] == 1)
             {
 
-                if (linha == i)
-                {
-                    diagonaisP[0]--;
-                }
-                if (N - linha + 1 == i)
-                {
-                    diagonaisP[1]--;
-                }
-
                 if (linha != 0)
                 {
                     if (vec[linha - 1][i] == 0)
                         colunasT[i] -= 1;
                 }
 
-                QuadrantesP[retornaQuadrante(linha + 1, i + 1) - 1]--;
+                QuadranteP[retornaQuadrante(linha + 1, i + 1) - 1]--;
                 colunasP[i]--;
             }
         }
+
+        return;
     }
     else
     {
         vec[linha] = combination;
-        // printf("LINHA: %d ,%d %d %d %d\n", linha, diagonaisP[0], db[0], diagonaisP[1], db[1]);
-
         if (linha == N - 1)
         {
             // imprimeQRcode(vec, N);
@@ -547,25 +469,73 @@ void ConstroiMatriz(vector<int> diagonaisP, vector<int> colunasP, vector<int> Qu
                 contadorQRcode++;
             }
 
-            colunasP = vector<int>(N, 0);
-            QuadrantesP = vector<int>(4, 0);
-            diagonaisP = vector<int>(2, 0);
+            if (combination[linha] == 1)
+                diagonaisP[0]--;
+            if (combination[N - linha - 1] == 1)
+                diagonaisP[1]--;
+            for (int i = 0; i < combination.size(); i++)
+            {
+                if (combination[i] == 0)
+                {
+                    if (linha != 0)
+                    {
+                        if (vec[linha - 1][i] == 1)
+                            colunasT[i] -= 1;
+                    }
+                }
+                if (combination[i] == 1)
+                {
+
+                    if (linha != 0)
+                    {
+                        if (vec[linha - 1][i] == 0)
+                            colunasT[i] -= 1;
+                    }
+
+                    QuadranteP[retornaQuadrante(linha + 1, i + 1) - 1]--;
+                    colunasP[i]--;
+                }
+            }
 
             return;
         }
 
-        gerador(diagonaisP, colunasP, QuadrantesP, colunasT, lb[linha + 1], linha + 1, 0, N - 1, combination, vec);
+        gerador(lb[linha + 1], linha + 1, 0, N - 1, combination, vec);
 
-        QuadrantesP = vector<int>(4, 0);
-        colunasP = vector<int>(N, 0);
-        diagonaisP = vector<int>(2, 0);
+        if (combination[linha] == 1)
+            diagonaisP[0]--;
+        if (combination[N - linha - 1] == 1)
+            diagonaisP[1]--;
+        for (int i = 0; i < combination.size(); i++)
+        {
+            if (combination[i] == 0)
+            {
+                if (linha != 0)
+                {
+                    if (vec[linha - 1][i] == 1)
+                        colunasT[i] -= 1;
+                }
+            }
+            if (combination[i] == 1)
+            {
+
+                if (linha != 0)
+                {
+                    if (vec[linha - 1][i] == 0)
+                        colunasT[i] -= 1;
+                }
+
+                QuadranteP[retornaQuadrante(linha + 1, i + 1) - 1]--;
+                colunasP[i]--;
+            }
+        }
     }
     return;
 }
 
 int main()
 {
-    auto start = std::chrono::high_resolution_clock::now();
+    // auto start = std::chrono::high_resolution_clock::now();
     int numeroQR;
     cin >> numeroQR;
 
@@ -584,17 +554,13 @@ int main()
 
         vector<int> combinacao(N, 0);
         LeituraQrCode(N);
-        vector<int> colunasT;
-        vector<int> colunasP;
-        vector<int> diagonaisP;
-        vector<int> QuadrantesP;
         colunasT = vector<int>(N, 0);
         colunasP = vector<int>(N, 0);
-        QuadrantesP = vector<int>(4, 0);
+        QuadranteP = vector<int>(4, 0);
         diagonaisP = vector<int>(2, 0);
-        // printf("LINHA: %d and N %d\n", lb[N - 1], N);
-        // vector<int> diagonaisP, vector<int> colunaP, vector<int> QuadranteP,
-        gerador(diagonaisP, colunasP, QuadrantesP, colunasT, lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
+
+        gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
+
         if (contadorQRcode == 1)
         {
             imprimeQRcode(ArrayFinal, numero);
@@ -608,10 +574,10 @@ int main()
             printf("DEFECT: No QR Code generated!\n");
         }
 
-        /*         auto stop = std::chrono::high_resolution_clock::now();
-                auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-                cout << duration.count() << endl;
-         */
+        // auto stop = std::chrono::high_resolution_clock::now();
+        // auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        // cout << duration.count() << endl;
+
         lb.clear();
         lt.clear();
         cb.clear();
