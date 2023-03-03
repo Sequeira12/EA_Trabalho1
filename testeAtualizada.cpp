@@ -9,6 +9,7 @@ using namespace std;
 vector<vector<int>> arrayNovo;
 vector<vector<int>> ArrayFinal;
 vector<int> combinacao;
+
 int N;
 // pretos por linha
 vector<int> lb;
@@ -109,12 +110,20 @@ bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 
 bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 {
-    if (diagonaisP[0] + N - linha - 1 < db[0] || diagonaisP[1] + N - linha - 1 < db[1])
+    // se for true as restantes linhas estao a 0
+
+    int contador_pretos_linha = 0;
+    for (int i = linha + 1; i < N; i++)
+    {
+        if (lb[i] != 0)
+            contador_pretos_linha++;
+    }
+
+    if (diagonaisP[0] + contador_pretos_linha < db[0] || diagonaisP[1] + contador_pretos_linha < db[1])
     {
         return false;
     }
-
-    if (diagonaisP[0] > db[0] || diagonaisP[1] + N - linha - 1 < db[1])
+    if (diagonaisP[0] > db[0] || diagonaisP[1] > db[1])
     {
         return false;
     }
@@ -123,7 +132,6 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
     {
         if (qb[i] < QuadranteP[i])
         {
-
             return false;
         }
     }
@@ -146,7 +154,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
             return false;
         }
         // (1-0 == 1 < 5 - 1)
-        if (colunasP[i] + N - linha - 1 < cb[i])
+        if (colunasP[i] + contador_pretos_linha < cb[i])
         {
             return false;
         }
