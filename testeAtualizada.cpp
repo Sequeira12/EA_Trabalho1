@@ -123,7 +123,7 @@ bool pre_proc(int size)
         contadorQuadrantes += qb[i];
         if (qb[i] < 0)
         {
-            printf("PRIMEIRO1\n");
+
             return false;
         }
         if (size % 2 == 0)
@@ -132,7 +132,7 @@ bool pre_proc(int size)
             int fim = (int)pow(metade, 2);
             if (qb[i] > fim)
             {
-                printf("PRIMEIRO22\n");
+
                 return false;
             }
         }
@@ -233,8 +233,9 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
             return false;
         }
     }
-    if(linhasFaltam[linha]==-1){
-        linhasFaltam[linha]=0;
+    if (linhasFaltam[linha] == -1)
+    {
+        linhasFaltam[linha] = 0;
         for (int i = linha + 1; i < N; i++)
         {
             if (lb[i] != 0)
@@ -343,10 +344,7 @@ void imprimeQRcode(vector<vector<int>> &array, int tam)
                 //     cout << "(";
                 // }
                 cout << "#";
-                // if(i==k){
-                //     cout << ")";
-                // }
-            }
+               }
             if (array[i][k] == 2)
             {
                 cout << "_";
@@ -444,13 +442,55 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         }
         return;
     }
-    else if (preto == 2 && lt[linha] == 4 && inicio == 0)
+    else if (lt[linha] == N - 1)
     {
-        comb = vector<int>(N, 0);
-        for (int i = 1; i < N - 2; i++)
+        if (N % 2 == 0)
         {
             comb = vector<int>(N, 0);
-            for (int j = i + 2; j < N; j++)
+            for (int i = 0; i < N; i += 2)
+            {
+                comb[i] = 1;
+            }
+            ConstroiMatriz(linha, comb, vec);
+
+            comb = vector<int>(N, 0);
+            for (int i = 1; i < N; i += 2)
+            {
+                comb[i] = 1;
+            }
+            ConstroiMatriz(linha, comb, vec);
+        }
+        else
+        {
+            int valor = N / 2 + 1;
+            if (lb[linha] == valor)
+            {
+                comb = vector<int>(N, 0);
+                for (int i = 0; i < N; i += 2)
+                {
+                    comb[i] = 1;
+                }
+                ConstroiMatriz(linha, comb, vec);
+            }
+            else
+            {
+                comb = vector<int>(N, 0);
+                for (int i = 1; i < N; i += 2)
+                {
+                    comb[i] = 1;
+                }
+                ConstroiMatriz(linha, comb, vec);
+            }
+        }
+    }
+
+    else if (lt[linha] % 2 == preto && lt[linha] / preto == 2 && inicio == 0)
+    {
+        comb = vector<int>(N, 0);
+        for (int i = 1; i < N - preto; i++)
+        {
+            comb = vector<int>(N, 0);
+            for (int j = i + preto; j < N; j++)
             {
                 comb[i] = 1;
                 comb[j] = 1;
@@ -472,6 +512,22 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         comb = vector<int>(N, 1);
         // 0 inicio
         comb[0] = 0;
+        ConstroiMatriz(linha, comb, vec);
+    }
+    else if (lt[linha] == 1 && inicio == 0 && preto != N - 1)
+    {
+        comb = vector<int>(N, 0);
+        for (int i = 0; i < preto; i++)
+        {
+            comb[i] = 1;
+        }
+        ConstroiMatriz(linha, comb, vec);
+
+        comb = vector<int>(N, 0);
+        for (int i = N - preto; i < N; i++)
+        {
+            comb[i] = 1;
+        }
         ConstroiMatriz(linha, comb, vec);
     }
 
@@ -695,7 +751,7 @@ int main()
             colunasP = vector<int>(N, 0);
             QuadranteP = vector<int>(4, 0);
             diagonaisP = vector<int>(2, 0);
-            linhasFaltam=vector <int> (N,-1);
+            linhasFaltam = vector<int>(N, -1);
 
             gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
 
