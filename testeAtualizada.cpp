@@ -29,6 +29,8 @@ vector<int> diagonaisP;
 vector<int> QuadranteP;
 vector<int> colunasT;
 
+vector<int> linhasFaltam;
+
 int conta = 0;
 int contadorQRcode = 0;
 int gera = 0;
@@ -231,14 +233,16 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
             return false;
         }
     }
-    int contador_pretos_linha = 0;
-    for (int i = linha + 1; i < N; i++)
-    {
-        if (lb[i] != 0)
-            contador_pretos_linha++;
+    if(linhasFaltam[linha]==-1){
+        linhasFaltam[linha]=0;
+        for (int i = linha + 1; i < N; i++)
+        {
+            if (lb[i] != 0)
+                linhasFaltam[linha]++;
+        }
     }
 
-    if (diagonaisP[0] + contador_pretos_linha < db[0] || diagonaisP[1] + contador_pretos_linha < db[1])
+    if (diagonaisP[0] + linhasFaltam[linha] < db[0] || diagonaisP[1] + linhasFaltam[linha] < db[1])
     {
         return false;
     }
@@ -273,7 +277,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
             return false;
         }
         // (1-0 == 1 < 5 - 1)
-        if (colunasP[i] + contador_pretos_linha < cb[i])
+        if (colunasP[i] + linhasFaltam[linha] < cb[i])
         {
             return false;
         }
@@ -691,6 +695,7 @@ int main()
             colunasP = vector<int>(N, 0);
             QuadranteP = vector<int>(4, 0);
             diagonaisP = vector<int>(2, 0);
+            linhasFaltam=vector <int> (N,-1);
 
             gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
 
