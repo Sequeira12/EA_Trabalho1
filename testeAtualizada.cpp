@@ -57,6 +57,118 @@ int retornaQuadrante(int linha, int coluna)
     }
     return 0;
 }
+
+bool pre_proc(int size)
+{
+    int contadorpretosLine = 0, contadorpretosCol = 0, contadorQuadrantes = 0;
+    // numero de pretos em todas as linhas e colunas
+
+    for (int i = 0; i < size; i++)
+    {
+        contadorpretosLine += lb[i];
+        contadorpretosCol += cb[i];
+
+        if (lb[i] > size || lb[i] < 0)
+        {
+
+            return false;
+        }
+        if (lt[i] > size - 1 || lt[i] < 0 || lt[i] > lb[i] * 2)
+        {
+
+            return false;
+        }
+        if (cb[i] > size || cb[i] < 0 || ct[i] > cb[i] * 2)
+        {
+
+            return false;
+        }
+        if (ct[i] == size - 1)
+        {
+            if (size % 2 == 0)
+            {
+                if (cb[i] != size / 2)
+                    return false;
+            }
+            else
+            {
+                int pacima = size / 2 + 1;
+                int pabaixo = size / 2;
+
+                if (cb[i] != pacima && cb[i] != pabaixo)
+                {
+
+                    return false;
+                }
+            }
+        }
+
+        if ((lt[i] == 0 && (lb[i] != size && lb[i] != 0)) || (ct[i] == 0 && (cb[i] != size && cb[i] != 0)))
+        {
+
+            return false;
+        }
+        if (ct[i] > size - 1 || ct[i] < 0)
+        {
+
+            return false;
+        }
+    }
+
+    // numero de pretos em todos os quadrantes
+    for (int i = 0; i < 4; i++)
+    {
+        contadorQuadrantes += qb[i];
+        if (qb[i] < 0)
+        {
+            printf("PRIMEIRO1\n");
+            return false;
+        }
+        if (size % 2 == 0)
+        {
+            int metade = size / 2;
+            int fim = (int)pow(metade, 2);
+            if (qb[i] > fim)
+            {
+                printf("PRIMEIRO22\n");
+                return false;
+            }
+        }
+        else
+        {
+
+            int valorbaixo = size / 2;
+            int valorcima = size / 2 + 1;
+
+            int toqone = valorbaixo * valorbaixo; // q[1]
+            int toqt = valorcima * valorcima;     // q[3]
+            int toqzero = valorcima * valorbaixo; // q[0],q[2]
+
+            if (qb[0] > toqzero || qb[1] > toqone || qb[2] > toqzero || qb[3] > toqt)
+            {
+
+                return false;
+            }
+        }
+        if (i < 2)
+        {
+
+            if (db[i] < 0 || db[i] > size)
+            {
+
+                return false;
+            }
+        }
+    }
+
+    // valor dos pretos totais linha diferente dos da coluna ou dos quadrante.....
+    if (contadorpretosLine != contadorpretosCol || contadorpretosLine != contadorQuadrantes || contadorpretosCol != contadorQuadrantes)
+    {
+        return false;
+    }
+    return true;
+}
+
 void LeituraQrCode(int size)
 {
     int valor, i;
@@ -111,7 +223,14 @@ bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 {
     // se for true as restantes linhas estao a 0
-
+    int linha2 = ceil(N / 2);
+    if (linha == linha2)
+    {
+        if (qb[0] != QuadranteP[0] || qb[1] != QuadranteP[1])
+        {
+            return false;
+        }
+    }
     int contador_pretos_linha = 0;
     for (int i = linha + 1; i < N; i++)
     {
@@ -562,30 +681,36 @@ int main()
 
         vector<int> combinacao(N, 0);
         LeituraQrCode(N);
-        colunasT = vector<int>(N, 0);
-        colunasP = vector<int>(N, 0);
-        QuadranteP = vector<int>(4, 0);
-        diagonaisP = vector<int>(2, 0);
-
-        gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
-
-        if (contadorQRcode == 1)
-        {
-            imprimeQRcode(ArrayFinal, numero);
-        }
-        else if (contadorQRcode > 1)
-        {
-            printf("INVALID: %d QR Codes generated!\n", contadorQRcode);
-        }
-        else
+        if (!pre_proc(N))
         {
             printf("DEFECT: No QR Code generated!\n");
         }
+        else
+        {
+            colunasT = vector<int>(N, 0);
+            colunasP = vector<int>(N, 0);
+            QuadranteP = vector<int>(4, 0);
+            diagonaisP = vector<int>(2, 0);
 
-        // auto stop = std::chrono::high_resolution_clock::now();
-        // auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-        // cout << duration.count() << endl;
+            gerador(lb[linha], linha, 0, N - 1, combinacao, arrayNovo);
 
+            if (contadorQRcode == 1)
+            {
+                imprimeQRcode(ArrayFinal, numero);
+            }
+            else if (contadorQRcode > 1)
+            {
+                printf("INVALID: %d QR Codes generated!\n", contadorQRcode);
+            }
+            else
+            {
+                printf("DEFECT: No QR Code generated!\n");
+            }
+
+            // auto stop = std::chrono::high_resolution_clock::now();
+            // auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+            // cout << duration.count() << endl;
+        }
         lb.clear();
         lt.clear();
         cb.clear();
