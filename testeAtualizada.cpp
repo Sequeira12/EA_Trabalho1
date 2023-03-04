@@ -6,9 +6,14 @@
 #include <chrono>
 
 using namespace std;
+
+
 vector<vector<int>> arrayNovo;
 vector<vector<int>> ArrayFinal;
 vector<int> combinacao;
+
+vector<bool> colunasCheias;
+int colunas_cheias=0;
 
 int N;
 // pretos por linha
@@ -28,7 +33,6 @@ vector<int> colunasP;
 vector<int> diagonaisP;
 vector<int> QuadranteP;
 vector<int> colunasT;
-
 vector<int> linhasFaltam;
 
 int conta = 0;
@@ -69,6 +73,11 @@ bool pre_proc(int size)
     {
         contadorpretosLine += lb[i];
         contadorpretosCol += cb[i];
+
+        if(cb[i]==N){
+            colunasCheias[i]=true;
+            colunas_cheias+=1;
+        }
 
         if (lb[i] > size || lb[i] < 0)
         {
@@ -260,13 +269,17 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
         }
     }
 
+
     int somaLB = 0, somaLT = 0, somaCP = 0, somaCT = 0;
     for (int i = 0; i < num; i++)
     {
+        if(array[i]==0 && colunasCheias[i]) return false;
+
         if (colunasT[i] > ct[i])
         {
             return false;
         }
+
 
         if (colunasT[i] + N - linha - 1 < ct[i])
         {
@@ -422,6 +435,16 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 
         comb = vector<int>(N, 1);
         ConstroiMatriz(linha, comb, vec);
+    }
+
+    else if (preto==colunas_cheias && inicio==0){
+        comb = vector<int>(N, 0);
+
+        for (int i=0;i<N;i++){
+            if (colunasCheias[i]) comb[i]=1;
+        }
+        ConstroiMatriz(linha, comb, vec);
+
     }
     else if (preto == 0 && inicio == 0)
     {
@@ -732,10 +755,13 @@ int main()
         int numero;
         cin >> numero;
 
+        N = numero;
+        colunas_cheias=0;
         arrayNovo = vector<vector<int>>(numero, vector<int>(numero, 0));
         ArrayFinal = vector<vector<int>>(numero, vector<int>(numero, 0));
+        colunasCheias=vector<bool>(numero,false);
 
-        N = numero;
+
 
         int linha = 0;
 

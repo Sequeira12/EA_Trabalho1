@@ -307,7 +307,7 @@ bool verificacaoAMEIO(int *lb, int *cb, int *lt, int *ct, int *qb, int *db, int 
     return false;
 }
 
-void imprimeQRcode(int **array, int tam)
+void imprimeQRcode(int **array[], int tam)
 {
     cout << "VALID: 1 QR Code generated!\n";
     cout << "+";
@@ -396,9 +396,9 @@ bool verificaAmeioCombinacoes(int *lb, int *cb, int *lt, int *ct, int *qb, int *
     return (falta - (lb[linha] - contaP) >= 0 || ((falta - 1) - (lt[linha] - contaT) >= 0));
 }
 
-void ConstroiMatriz(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int colunasT[], int colunasP[], int QuadranteP[], int diagonaisP[], int linhasFaltam[], int linha, int *combination, int **vec, int **final);
+void ConstroiMatriz(int * lb, int * cb, int * lt, int * ct, int * qb, int * db, int * colunasT, int * colunasP, int * QuadranteP, int * diagonaisP, int * linhasFaltam, int linha, int *combination, int **vec, int **final);
 
-void gerador(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int colunasT[], int colunasP[], int QuadranteP[], int diagonaisP[], int linhasFaltam[], int preto, int linha, int inicio, int fim, int combination[], int **vec, int **final)
+void gerador(int * lb, int * cb, int * lt, int * ct, int * qb, int * db, int * colunasT, int * colunasP, int * QuadranteP, int * diagonaisP, int * linhasFaltam, int preto, int linha, int inicio, int fim, int * combination, int **vec, int **final)
 {
 
     int comb[N];
@@ -567,7 +567,7 @@ void gerador(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int col
     }
 }
 
-void ConstroiMatriz(int lb[], int cb[], int lt[], int ct[], int qb[], int db[], int colunasT[], int colunasP[], int QuadranteP[], int diagonaisP[], int linhasFaltam[], int linha, int combination[], int **vec, int **final)
+void ConstroiMatriz(int * lb, int * cb, int * lt, int * ct, int * qb, int * db, int * colunasT, int * colunasP, int * QuadranteP, int * diagonaisP, int * linhasFaltam, int linha, int *combination, int **vec, int **final)
 {
     printf("%d %d %d\n", lb[0], lb[1], lb[2]);
     if (combination[linha] == 1)
@@ -754,11 +754,11 @@ int main()
                 linhasFaltam[i] = -1;
             }
             int combinacao[N];
-            gerador(lb, cb, lt, ct, qb, db, colunasT, colunasP, QuadranteP, diagonaisP, linhasFaltam, lb[linha], linha, 0, N - 1, combinacao, reinterpret_cast<int **>(arrayNovo), reinterpret_cast<int **>(ArrayFinal));
+            gerador(lb, cb, lt, ct, qb, db, colunasT, colunasP, QuadranteP, diagonaisP, linhasFaltam, lb[linha], linha, 0, N - 1, combinacao, arrayNovo, ArrayFinal);
 
             if (contadorQRcode == 1)
             {
-                imprimeQRcode(reinterpret_cast<int **>(ArrayFinal), numero);
+                imprimeQRcode(ArrayFinal, numero);
             }
             else if (contadorQRcode > 1)
             {
