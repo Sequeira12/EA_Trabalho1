@@ -437,6 +437,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         ConstroiMatriz(linha, comb, vec);
     }
 
+
     else if (preto==colunas_cheias && inicio==0){
         comb = vector<int>(N, 0);
 
@@ -444,6 +445,22 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             if (colunasCheias[i]) comb[i]=1;
         }
         ConstroiMatriz(linha, comb, vec);
+
+    }
+
+    else if (preto==colunas_cheias+1 && inicio==0){
+        //so testar uma posicao
+        comb = vector<int>(N, 0);
+        for (int i=0;i<N;i++){
+            if (colunasCheias[i]) comb[i]=1;
+        }
+        for (int i=0;i<N;i++){
+            if(comb[i]==0){
+                comb[i]=1;
+                ConstroiMatriz(linha, comb, vec);
+                comb[i]=0;
+            }
+        }
 
     }
     else if (preto == 0 && inicio == 0)
