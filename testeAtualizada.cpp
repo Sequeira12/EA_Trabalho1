@@ -7,13 +7,12 @@
 
 using namespace std;
 
-
 vector<vector<int>> arrayNovo;
 vector<vector<int>> ArrayFinal;
 vector<int> combinacao;
 
 vector<bool> colunasCheias;
-int colunas_cheias=0;
+int colunas_cheias = 0;
 
 int N;
 // pretos por linha
@@ -74,9 +73,10 @@ bool pre_proc(int size)
         contadorpretosLine += lb[i];
         contadorpretosCol += cb[i];
 
-        if(cb[i]==N){
-            colunasCheias[i]=true;
-            colunas_cheias+=1;
+        if (cb[i] == N)
+        {
+            colunasCheias[i] = true;
+            colunas_cheias += 1;
         }
 
         if (lb[i] > size || lb[i] < 0)
@@ -234,7 +234,30 @@ bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 {
     // se for true as restantes linhas estao a 0
+
     int linha2 = ceil(N / 2);
+    int falta = linha2 - linha;
+
+    if (falta > 0 && falta != 0)
+    {
+
+        if (falta * linha2 < qb[0] - QuadranteP[0] || falta * linha2 < qb[1] - QuadranteP[1])
+        {
+
+            return false;
+        }
+    }
+    else if (falta < 0 && falta != 0)
+    {
+
+        int f = N - linha;
+        if (f * linha2 < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
+        {
+
+            return false;
+        }
+    }
+
     if (linha == linha2)
     {
         if (qb[0] != QuadranteP[0] || qb[1] != QuadranteP[1])
@@ -269,17 +292,16 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
         }
     }
 
-
     int somaLB = 0, somaLT = 0, somaCP = 0, somaCT = 0;
     for (int i = 0; i < num; i++)
     {
-        if(array[i]==0 && colunasCheias[i]) return false;
+        if (array[i] == 0 && colunasCheias[i])
+            return false;
 
         if (colunasT[i] > ct[i])
         {
             return false;
         }
-
 
         if (colunasT[i] + N - linha - 1 < ct[i])
         {
@@ -357,7 +379,7 @@ void imprimeQRcode(vector<vector<int>> &array, int tam)
                 //     cout << "(";
                 // }
                 cout << "#";
-               }
+            }
             if (array[i][k] == 2)
             {
                 cout << "_";
@@ -394,34 +416,6 @@ bool contarPretosDiagonal(vector<vector<int>> &mat, int k)
     return count == db[0] && count2 == db[1];
 }
 
-bool verificaAmeioCombinacoes(int linha, vector<int> &combinacao)
-{
-    if (combinacao.size() == 0)
-    {
-        return true;
-    }
-    // N - linha - 1
-    int falta = N - combinacao.size();
-    int contaP = 0, contaT = 0;
-    for (int i = 0; i < combinacao.size() - 1; i++)
-    {
-
-        if (combinacao[i] == 1)
-        {
-            contaP += 1;
-        }
-        if (i != combinacao.size() - 1)
-        {
-            if (combinacao[i] != combinacao[i + 1])
-            {
-                contaT += 1;
-            }
-        }
-    }
-    // n - linha - 1 - (db[0] - diagonaisP[0]) >= 0
-    return (falta - (lb[linha] - contaP) >= 0 || ((falta - 1) - (lt[linha] - contaT) >= 0));
-}
-
 void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec);
 
 void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination, vector<vector<int>> &vec)
@@ -437,31 +431,36 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         ConstroiMatriz(linha, comb, vec);
     }
 
-
-    else if (preto==colunas_cheias && inicio==0){
+    else if (preto == colunas_cheias && inicio == 0)
+    {
         comb = vector<int>(N, 0);
 
-        for (int i=0;i<N;i++){
-            if (colunasCheias[i]) comb[i]=1;
+        for (int i = 0; i < N; i++)
+        {
+            if (colunasCheias[i])
+                comb[i] = 1;
         }
         ConstroiMatriz(linha, comb, vec);
-
     }
 
-    else if (preto==colunas_cheias+1 && inicio==0){
-        //so testar uma posicao
+    else if (preto == colunas_cheias + 1 && inicio == 0)
+    {
+        // so testar uma posicao
         comb = vector<int>(N, 0);
-        for (int i=0;i<N;i++){
-            if (colunasCheias[i]) comb[i]=1;
+        for (int i = 0; i < N; i++)
+        {
+            if (colunasCheias[i])
+                comb[i] = 1;
         }
-        for (int i=0;i<N;i++){
-            if(comb[i]==0){
-                comb[i]=1;
+        for (int i = 0; i < N; i++)
+        {
+            if (comb[i] == 0)
+            {
+                comb[i] = 1;
                 ConstroiMatriz(linha, comb, vec);
-                comb[i]=0;
+                comb[i] = 0;
             }
         }
-
     }
     else if (preto == 0 && inicio == 0)
     {
@@ -687,7 +686,7 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
         vec[linha] = combination;
         if (linha == N - 1)
         {
-            // imprimeQRcode(vec, N);
+
             if (verificacaoFinal(vec, N, 1))
             {
 
@@ -773,12 +772,10 @@ int main()
         cin >> numero;
 
         N = numero;
-        colunas_cheias=0;
+        colunas_cheias = 0;
         arrayNovo = vector<vector<int>>(numero, vector<int>(numero, 0));
         ArrayFinal = vector<vector<int>>(numero, vector<int>(numero, 0));
-        colunasCheias=vector<bool>(numero,false);
-
-
+        colunasCheias = vector<bool>(numero, false);
 
         int linha = 0;
 
