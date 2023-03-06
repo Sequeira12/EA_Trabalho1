@@ -240,21 +240,38 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 
     if (falta > 0 && falta != 0)
     {
-
-        if (falta * linha2 < qb[0] - QuadranteP[0] || falta * linha2 < qb[1] - QuadranteP[1])
+        if (N % 2 == 0)
         {
-
-            return false;
+            if (falta * linha2 < qb[0] - QuadranteP[0] || falta * linha2 < qb[1] - QuadranteP[1])
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (falta * linha2 < qb[0] - QuadranteP[0] || falta * (linha2 + 1) < qb[1] - QuadranteP[1])
+            {
+                return false;
+            }
         }
     }
     else if (falta < 0 && falta != 0)
     {
 
         int f = N - linha;
-        if (f * linha2 < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
+        if (N % 2 == 0)
         {
-
-            return false;
+            if (f * linha2 < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (f * (linha2 + 1) < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
+            {
+                return false;
+            }
         }
     }
 
@@ -303,16 +320,11 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
             return false;
         }
 
-        if (colunasT[i] + N - linha - 1 < ct[i])
-        {
-            return false;
-        }
-
         if (colunasP[i] > cb[i])
         {
             return false;
         }
-        // (1-0 == 1 < 5 - 1)
+
         if (colunasP[i] + linhasFaltam[linha] < cb[i])
         {
             return false;
@@ -320,7 +332,6 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 
         if (array[i] == 1)
         {
-
             somaLB += 1;
         }
         if (i != num - 1)
@@ -553,6 +564,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         comb[0] = 0;
         ConstroiMatriz(linha, comb, vec);
     }
+
     else if (lt[linha] == 1 && inicio == 0 && preto != N - 1)
     {
         comb = vector<int>(N, 0);
