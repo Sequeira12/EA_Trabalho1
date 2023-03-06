@@ -67,9 +67,40 @@ bool pre_proc(int size)
 {
     int contadorpretosLine = 0, contadorpretosCol = 0, contadorQuadrantes = 0;
     // numero de pretos em todas as linhas e colunas
-
+    int contadorpretoLine2 = 0, contadorpretoCol2 = 0;
     for (int i = 0; i < size; i++)
     {
+        int meio = ceil(size / 2);
+
+        if (i >= meio)
+        {
+
+            contadorpretoLine2 += lb[i];
+            contadorpretoCol2 += cb[i];
+        }
+
+        if (i == meio)
+        {
+            if (contadorpretosCol != qb[2] + qb[1])
+            {
+                return false;
+            }
+            if (contadorpretosLine != qb[0] + qb[1])
+            {
+                return false;
+            }
+        }
+        if (i == size - 1)
+        {
+            if (contadorpretoLine2 != qb[2] + qb[3])
+            {
+                return false;
+            }
+            if (contadorpretoCol2 != qb[0] + qb[3])
+            {
+                return false;
+            }
+        }
         contadorpretosLine += lb[i];
         contadorpretosCol += cb[i];
 
@@ -88,6 +119,13 @@ bool pre_proc(int size)
         {
 
             return false;
+        }
+        if (lb[i] > 1 && lb[i] != N)
+        {
+            if (lt[i] < 1 || lt[i] > lb[i] * 2)
+            {
+                return false;
+            }
         }
         if (cb[i] > size || cb[i] < 0 || ct[i] > cb[i] * 2)
         {
@@ -163,7 +201,10 @@ bool pre_proc(int size)
         }
         if (i < 2)
         {
-
+            if (qb[1] + qb[3] < db[0] || qb[0] + qb[2] < db[1])
+            {
+                return false;
+            }
             if (db[i] < 0 || db[i] > size)
             {
 
@@ -533,7 +574,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             }
         }
     }
-
+    // 0 1 0 0 0 0 0 1 0 0 0 1 0
     else if (lt[linha] % 2 == preto && lt[linha] / preto == 2 && inicio == 0)
     {
         comb = vector<int>(N, 0);
@@ -701,8 +742,10 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
             if (verificacaoFinal(vec, N, 1))
             {
-
-                ArrayFinal = vec;
+                if (contadorQRcode == 0)
+                {
+                    ArrayFinal = vec;
+                }
 
                 contadorQRcode++;
             }
