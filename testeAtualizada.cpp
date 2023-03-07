@@ -171,8 +171,7 @@ bool pre_proc(int size)
     int maxq1 = floor(N / 2) * floor(N / 2);
     int maxq2 = floor(N / 2 + 1) * floor(N / 2 + 1);
 
-    // printf("%d %d %d %d\n", maxquadrantezero, maxquadranteum, maxquadrantedois, maxquadrantetres);
-    int array[4] = {maxq0, maxq1, maxq2, maxq0};
+    int array[4] = {maxq0, maxq1, maxq0, maxq2};
 
     // numero de pretos em todos os quadrantes
     for (int i = 0; i < 4; i++)
@@ -301,6 +300,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
         {
             if (falta * linha2 < qb[0] - QuadranteP[0] || falta * linha2 < qb[1] - QuadranteP[1])
             {
+
                 return false;
             }
         }
@@ -308,6 +308,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
         {
             if (falta * linha2 < qb[0] - QuadranteP[0] || falta * (linha2 + 1) < qb[1] - QuadranteP[1])
             {
+
                 return false;
             }
         }
@@ -320,6 +321,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
         {
             if (f * linha2 < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
             {
+
                 return false;
             }
         }
@@ -327,6 +329,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
         {
             if (f * (linha2 + 1) < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
             {
+
                 return false;
             }
         }
@@ -336,6 +339,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
     {
         if (qb[0] != QuadranteP[0] || qb[1] != QuadranteP[1])
         {
+
             return false;
         }
     }
@@ -355,6 +359,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
     }
     if (diagonaisP[0] > db[0] || diagonaisP[1] > db[1])
     {
+
         return false;
     }
 
@@ -362,6 +367,7 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
     {
         if (qb[i] < QuadranteP[i])
         {
+
             return false;
         }
     }
@@ -491,9 +497,9 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 
     vector<int> comb;
     vector<vector<int>> combs;
-    int quad = retornaQuadrante(linha, 1);
-    int quad2 = retornaQuadrante(linha, N);
-    int valor_es = quad--, valor_dir = quad2--;
+    int quad = retornaQuadrante(linha + 1, 1);
+    int quad2 = retornaQuadrante(linha + 1, N - 1);
+    int valor_es = quad - 1, valor_dir = quad2 - 1;
 
     if (N == preto && inicio == 0)
     {
@@ -679,9 +685,11 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 
     else if (QuadrantesCheios[valor_es] || QuadrantesCheios[valor_dir])
     {
+
         comb = vector<int>(N, 0);
         if (QuadrantesCheios[valor_es])
         {
+
             for (int i = 0; i < N / 2; i++)
             {
                 comb[i] = 1;
@@ -711,6 +719,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         }
         else if (QuadrantesCheios[valor_dir])
         {
+
             for (int i = N / 2; i < N; i++)
             {
                 comb[i] = 1;
