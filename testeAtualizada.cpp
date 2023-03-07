@@ -10,7 +10,7 @@ using namespace std;
 vector<vector<int>> arrayNovo;
 vector<vector<int>> ArrayFinal;
 vector<int> combinacao;
-
+vector<bool> QuadrantesCheios;
 vector<bool> colunasCheias;
 int colunas_cheias = 0;
 
@@ -65,6 +65,7 @@ int retornaQuadrante(int linha, int coluna)
 
 bool pre_proc(int size)
 {
+
     int contadorpretosLine = 0, contadorpretosCol = 0, contadorQuadrantes = 0;
     // numero de pretos em todas as linhas e colunas
     int contadorpretoLine2 = 0, contadorpretoCol2 = 0;
@@ -163,10 +164,27 @@ bool pre_proc(int size)
             return false;
         }
     }
+    int max;
+
+    int valor = N;
+    int maxquadrantezero = (valor / 2) * (valor - valor / 2);
+    int maxquadrantedois = (valor / 2) * (valor - valor / 2);
+
+    int maxquadranteum = (valor / 2) * (valor / 2);
+
+    int maxquadrantetres = (valor - valor / 2) * (valor - valor / 2);
+    // printf("%d %d %d %d\n", maxquadrantezero, maxquadranteum, maxquadrantedois, maxquadrantetres);
+    int array[4] = {maxquadrantezero, maxquadranteum, maxquadrantedois, maxquadrantetres};
 
     // numero de pretos em todos os quadrantes
     for (int i = 0; i < 4; i++)
     {
+
+        if (qb[i] == array[i])
+        {
+
+            QuadrantesCheios[i] = true;
+        }
         contadorQuadrantes += qb[i];
         if (qb[i] < 0)
         {
@@ -475,6 +493,9 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 
     vector<int> comb;
     vector<vector<int>> combs;
+    int quad = retornaQuadrante(linha, 1);
+    int quad2 = retornaQuadrante(linha, N - 1);
+    int valor = quad--, valor2 = quad2--;
 
     if (N == preto && inicio == 0)
     {
@@ -574,7 +595,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             }
         }
     }
-    // 0 1 0 0 0 0 0 1 0 0 0 1 0
+
     else if (lt[linha] % 2 == preto && lt[linha] / preto == 2 && inicio == 0)
     {
         comb = vector<int>(N, 0);
@@ -656,16 +677,116 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             ConstroiMatriz(linha, comb, vec);
         }
     }
+    /* else if (QuadrantesCheios[valor] )
+    {
+        if (QuadrantesCheios[valor])
+        {
+            if (N % 2 == 0)
+            {
+                for (int i = 0; i < N / 2; i++)
+                {
+                    comb[i] = 1;
+                }
+                vector<int> comb2(N / 2, 0);
+
+                for (int k = 0; k < preto - N / 2; k++)
+                {
+                    comb2[k] = 1;
+                }
+
+                do
+                {
+
+                    for (int i = 0; i < preto - N / 2; i++)
+                    {
+
+                        comb[i + N / 2] = comb2[i];
+                    }
+
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+            else
+            {
+                for (int i = 0; i < N / 2; i++)
+                {
+                    comb[i] = 1;
+                }
+                vector<int> comb2(N / 2, 0);
+
+                for (int k = 0; k < preto - N / 2; k++)
+                {
+                    comb2[k] = 1;
+                }
+                do
+                {
+                    for (int i = 0; i < N / 2 - 1; i++)
+                    {
+                        comb[i + N / 2 + 1] = comb2[i];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+        }
+          if (QuadrantesCheios[valor2])
+           {
+               if (N % 2 == 0)
+               {
+                   for (int i = N / 2; i < N; i++)
+                   {
+                       comb[i] = 1;
+                   }
+                   vector<int> comb2(N / 2, 0);
+
+                   for (int k = 0; k < preto - N / 2; k++)
+                   {
+                       comb2[k] = 1;
+                   }
+                   do
+                   {
+                       for (int i = N / 2; i < N; i++)
+                       {
+                           comb[i] = comb2[i - N / 2];
+                       }
+                       ConstroiMatriz(linha, comb, vec);
+                   } while (prev_permutation(comb2.begin(), comb2.end()));
+               }
+               else
+               {
+                   for (int i = N / 2 - 1; i < N; i++)
+                   {
+                       comb[i] = 1;
+                   }
+                   vector<int> comb2(N / 2, 0);
+
+                   for (int k = 0; k < preto - N / 2; k++)
+                   {
+                       comb2[k] = 1;
+                   }
+                   do
+                   {
+                       for (int i = 0; i < N / 2 - 1; i++)
+                       {
+                           comb[i + N / 2] = comb2[i];
+                       }
+                       ConstroiMatriz(linha, comb, vec);
+                   } while (prev_permutation(comb2.begin(), comb2.end()));
+               }
+           }*/
+
     else
     {
 
         comb = vector<int>(N, 0);
+
         for (int i = 0; i < preto; i++)
         {
             comb[i] = 1;
         }
+
         do
         {
+
             ConstroiMatriz(linha, comb, vec);
         } while (prev_permutation(comb.begin(), comb.end()));
     }
@@ -816,7 +937,7 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
 
 int main()
 {
-    // auto start = std::chrono::high_resolution_clock::now();
+
     int numeroQR;
     cin >> numeroQR;
 
@@ -831,11 +952,13 @@ int main()
         arrayNovo = vector<vector<int>>(numero, vector<int>(numero, 0));
         ArrayFinal = vector<vector<int>>(numero, vector<int>(numero, 0));
         colunasCheias = vector<bool>(numero, false);
+        QuadrantesCheios = vector<bool>(4, false);
 
         int linha = 0;
 
         vector<int> combinacao(N, 0);
         LeituraQrCode(N);
+
         if (!pre_proc(N))
         {
             printf("DEFECT: No QR Code generated!\n");
@@ -862,11 +985,8 @@ int main()
             {
                 printf("DEFECT: No QR Code generated!\n");
             }
-
-            // auto stop = std::chrono::high_resolution_clock::now();
-            // auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-            // cout << duration.count() << endl;
         }
+
         lb.clear();
         lt.clear();
         cb.clear();
