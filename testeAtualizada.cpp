@@ -173,7 +173,7 @@ bool pre_proc(int size)
     int maxquadranteum = (valor / 2) * (valor / 2);
 
     int maxquadrantetres = (valor - valor / 2) * (valor - valor / 2);
-    // printf("%d %d %d %d\n", maxquadrantezero, maxquadranteum, maxquadrantedois, maxquadrantetres);
+
     int array[4] = {maxquadrantezero, maxquadranteum, maxquadrantedois, maxquadrantetres};
 
     // numero de pretos em todos os quadrantes
@@ -677,10 +677,12 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             ConstroiMatriz(linha, comb, vec);
         }
     }
-    /* else if (QuadrantesCheios[valor] )
+    else if (QuadrantesCheios[valor] || QuadrantesCheios[valor2])
     {
+
         if (QuadrantesCheios[valor])
         {
+
             if (N % 2 == 0)
             {
                 for (int i = 0; i < N / 2; i++)
@@ -708,7 +710,35 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             }
             else
             {
+                vector<int> comb(N, 0);
                 for (int i = 0; i < N / 2; i++)
+                {
+                    comb[i] = 1;
+                }
+                vector<int> comb2(N / 2 + 1, 0);
+
+                for (int k = 0; k < preto - N / 2; k++)
+                {
+                    comb2[k] = 1;
+                }
+                do
+                {
+
+                    for (int i = 0; i < N / 2 - 1; i++)
+                    {
+                        comb[i + N / 2 + 1] = comb2[i];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+        }
+        else if (QuadrantesCheios[valor2])
+        {
+
+            if (N % 2 == 0)
+            {
+
+                for (int i = N / 2; i < N; i++)
                 {
                     comb[i] = 1;
                 }
@@ -720,60 +750,92 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
                 }
                 do
                 {
-                    for (int i = 0; i < N / 2 - 1; i++)
+                    for (int i = N / 2; i < N; i++)
                     {
-                        comb[i + N / 2 + 1] = comb2[i];
+
+                        comb[i] = comb2[i - N / 2];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+            else
+            {
+
+                vector<int> comb(N, 0);
+                for (int i = N / 2; i < N; i++)
+                {
+                    comb[i] = 1;
+                }
+                vector<int> comb2(N / 2, 0);
+
+                for (int k = 0; k < preto - N / 2; k++)
+                {
+
+                    comb2[k] = 1;
+                }
+                do
+                {
+                    for (int i = 0; i < comb2.size(); i++)
+                    {
+
+                        comb[i] = comb2[i];
                     }
                     ConstroiMatriz(linha, comb, vec);
                 } while (prev_permutation(comb2.begin(), comb2.end()));
             }
         }
-          if (QuadrantesCheios[valor2])
-           {
-               if (N % 2 == 0)
-               {
-                   for (int i = N / 2; i < N; i++)
-                   {
-                       comb[i] = 1;
-                   }
-                   vector<int> comb2(N / 2, 0);
+        else if (QuadrantesCheios[valor2])
+        {
 
-                   for (int k = 0; k < preto - N / 2; k++)
-                   {
-                       comb2[k] = 1;
-                   }
-                   do
-                   {
-                       for (int i = N / 2; i < N; i++)
-                       {
-                           comb[i] = comb2[i - N / 2];
-                       }
-                       ConstroiMatriz(linha, comb, vec);
-                   } while (prev_permutation(comb2.begin(), comb2.end()));
-               }
-               else
-               {
-                   for (int i = N / 2 - 1; i < N; i++)
-                   {
-                       comb[i] = 1;
-                   }
-                   vector<int> comb2(N / 2, 0);
+            if (N % 2 == 0)
+            {
 
-                   for (int k = 0; k < preto - N / 2; k++)
-                   {
-                       comb2[k] = 1;
-                   }
-                   do
-                   {
-                       for (int i = 0; i < N / 2 - 1; i++)
-                       {
-                           comb[i + N / 2] = comb2[i];
-                       }
-                       ConstroiMatriz(linha, comb, vec);
-                   } while (prev_permutation(comb2.begin(), comb2.end()));
-               }
-           }*/
+                for (int i = N / 2; i < N; i++)
+                {
+                    comb[i] = 1;
+                }
+                vector<int> comb2(N / 2, 0);
 
+                for (int k = 0; k < preto - N / 2; k++)
+                {
+                    comb2[k] = 1;
+                }
+                do
+                {
+                    for (int i = N / 2; i < N; i++)
+                    {
+
+                        comb[i] = comb2[i - N / 2];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+            else
+            {
+                vector<int> comb(N, 0);
+                for (int i = N / 2 - 1; i < N; i++)
+                {
+                    comb[i] = 1;
+                }
+                vector<int> comb2(N / 2, 0);
+
+                for (int k = 0; k < preto - N / 2; k++)
+                {
+
+                    comb2[k] = 1;
+                }
+                do
+                {
+                    for (int i = 0; i < N / 2 - 1; i++)
+                    {
+
+                        comb[i + N / 2] = comb2[i];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+        }
+    }
     else
     {
 
@@ -857,6 +919,7 @@ void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &ve
     }
     else
     {
+
         vec[linha] = combination;
         if (linha == N - 1)
         {
