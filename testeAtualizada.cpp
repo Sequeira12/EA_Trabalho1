@@ -383,6 +383,8 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
             return false;
         }
 
+        if(colunasT[i]+ N-linha-1 < ct[i]) return false;
+
         if (colunasP[i] > cb[i])
         {
             return false;
@@ -682,7 +684,47 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
             ConstroiMatriz(linha, comb, vec);
         }
     }
+    else if (qb[valor_es]==0 || qb[valor_dir]==0){
+        comb = vector<int>(N, 0);
+        if (qb[valor_es]==0 )
+        {
+            vector<int> comb2(N - N / 2, 0);
+                for (int k = 0; k < preto; k++)
+                {
+                    comb2[k] = 1;
+                }
 
+                do
+                {
+                    for (int i = 0; i < N - N / 2; i++)
+                    {
+
+                        comb[i + N / 2] = comb2[i];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+        }
+        
+        else if (qb[valor_dir]==0)
+        {
+
+            vector<int> comb2(N / 2, 0);
+
+            for (int k = 0; k < preto; k++)
+                {
+                    comb2[k] = 1;
+                }
+                do
+                {
+                    for (int i = 0; i < N / 2; i++)
+                    {
+                        comb[i] = comb2[i];
+                    }
+                    ConstroiMatriz(linha, comb, vec);
+                } while (prev_permutation(comb2.begin(), comb2.end()));
+            }
+        
+    }
     else if (QuadrantesCheios[valor_es] || QuadrantesCheios[valor_dir])
     {
 
