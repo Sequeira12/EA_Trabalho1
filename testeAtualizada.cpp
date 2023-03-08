@@ -553,6 +553,11 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
                 ConstroiMatriz(linha, comb, vec);
         }
     }
+    else if (preto == 0 && inicio == 0)
+    {
+        comb = vector<int>(N, 0);
+        ConstroiMatriz(linha, comb, vec);
+    }
     else if (qb[valor_es] == 0 || qb[valor_dir] == 0)
     {
 
@@ -627,13 +632,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         }
     }
 
-    else if (preto == 0 && inicio == 0)
-    {
-        comb = vector<int>(N, 0);
-        ConstroiMatriz(linha, comb, vec);
-    }
-
-    // caso 1 preto com duas transicoes(01000)
+       // caso 1 preto com duas transicoes(01000)
     else if (preto == 1 && lt[linha] == 2 && inicio == 0)
     {
         comb = vector<int>(N, 0);
