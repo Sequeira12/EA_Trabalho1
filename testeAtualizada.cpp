@@ -289,60 +289,37 @@ bool verificacaoFinal(vector<vector<int>> &array, int num, int valor)
 
 bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 {
-    // se for true as restantes linhas estao a 0
 
     int linha2 = ceil(N / 2);
-    int falta = linha2 - linha;
+    int falta = linha2 - linha - 1;
 
-    if (falta > 0 && falta != 0)
-    {
-        if (N % 2 == 0)
-        {
-            if (falta * linha2 < qb[0] - QuadranteP[0] || falta * linha2 < qb[1] - QuadranteP[1])
-            {
-
-                return false;
-            }
-        }
-        else
-        {
-            if (falta * linha2 < qb[0] - QuadranteP[0] || falta * (linha2 + 1) < qb[1] - QuadranteP[1])
-            {
-
-                return false;
-            }
-        }
-    }
-    else if (falta < 0 && falta != 0)
-    {
-
-        int f = N - linha;
-        if (N % 2 == 0)
-        {
-            if (f * linha2 < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
-            {
-
-                return false;
-            }
-        }
-        else
-        {
-            if (f * (linha2 + 1) < qb[2] - QuadranteP[2] || f * linha2 < qb[3] - QuadranteP[3])
-            {
-
-                return false;
-            }
-        }
-    }
-
-    if (linha == linha2)
+    //quando chegamos a linha anterior ao limite do quad
+    if (linha == linha2-1)
     {
         if (qb[0] != QuadranteP[0] || qb[1] != QuadranteP[1])
         {
-
             return false;
         }
     }
+
+
+    if (linha<linha2)
+    {
+            if (falta * ceil(N/2) < qb[1] - QuadranteP[1] || falta * (N - ceil(N/2))< qb[0] - QuadranteP[0])
+            {
+
+                return false;
+            }
+    }
+    else
+    {
+        int f = N - linha - 1;
+            if (f * ceil(N/2) < qb[2] - QuadranteP[2] || f * (N - ceil(N/2))< qb[3] - QuadranteP[3])
+            {
+                return false;
+            }
+    }
+
     if (linhasFaltam[linha] == -1)
     {
         linhasFaltam[linha] = 0;
@@ -620,21 +597,21 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         }
     }
 
-    else if (lt[linha] == 1 && preto == N - 1 && inicio == 0)
-    {
-        comb = vector<int>(N, 1);
+    // else if (lt[linha] == 1 && preto == N - 1 && inicio == 0)
+    // {
+    //     comb = vector<int>(N, 1);
 
-        // 0 fim
-        comb[N - 1] = 0;
-        ConstroiMatriz(linha, comb, vec);
+    //     // 0 fim
+    //     comb[N - 1] = 0;
+    //     ConstroiMatriz(linha, comb, vec);
 
-        comb = vector<int>(N, 1);
-        // 0 inicio
-        comb[0] = 0;
-        ConstroiMatriz(linha, comb, vec);
-    }
+    //     comb = vector<int>(N, 1);
+    //     // 0 inicio
+    //     comb[0] = 0;
+    //     ConstroiMatriz(linha, comb, vec);
+    // }
 
-    else if (lt[linha] == 1 && inicio == 0 && preto != N - 1)
+    else if (lt[linha] == 1 && inicio == 0)
     {
         comb = vector<int>(N, 0);
         for (int i = 0; i < preto; i++)
@@ -807,6 +784,14 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 
 void ConstroiMatriz(int linha, vector<int> &combination, vector<vector<int>> &vec)
 {
+    int count_transicoes=0;
+    for (int i=0;i<N-1;i++){
+        if(combination[i]!=combination[i+1]) count_transicoes+=1;
+        if(count_transicoes>lt[linha]) return;
+    }
+    
+    if(count_transicoes!=lt[linha]) return;
+
     if (combination[linha] == 1)
         diagonaisP[0]++;
     if (combination[N - linha - 1] == 1)
