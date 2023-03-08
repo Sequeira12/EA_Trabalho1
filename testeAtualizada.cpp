@@ -296,105 +296,110 @@ bool verificacaoCombinacao(vector<int> &array, int num, int linha)
 
     int linha2 = ceil(N / 2);
     int falta = linha2 - linha - 1;
+    int falta = linha2 - linha - 1;
 
     // quando chegamos a linha anterior ao limite do quad
     if (linha == linha2 - 1)
     {
         if (qb[0] != QuadranteP[0] || qb[1] != QuadranteP[1])
-        {
-            return false;
-        }
-    }
-
-    if (linha < linha2)
-    {
-        if (falta * ceil(N / 2) < qb[1] - QuadranteP[1] || falta * (N - ceil(N / 2)) < qb[0] - QuadranteP[0])
-        {
-
-            return false;
-        }
-    }
-    else
-    {
-        int f = N - linha - 1;
-        if (f * ceil(N / 2) < qb[2] - QuadranteP[2] || f * (N - ceil(N / 2)) < qb[3] - QuadranteP[3])
-        {
-            return false;
-        }
-    }
-
-    if (linhasFaltam[linha] == -1)
-    {
-        linhasFaltam[linha] = 0;
-        for (int i = linha + 1; i < N; i++)
-        {
-            if (lb[i] != 0)
-                linhasFaltam[linha]++;
-        }
-    }
-
-    if (diagonaisP[0] + linhasFaltam[linha] < db[0] || diagonaisP[1] + linhasFaltam[linha] < db[1])
-    {
-        return false;
-    }
-    if (diagonaisP[0] > db[0] || diagonaisP[1] > db[1])
-    {
-
-        return false;
-    }
-
-    for (int i = 0; i < 4; i++)
-    {
-        if (qb[i] < QuadranteP[i])
-        {
-
-            return false;
-        }
-    }
-
-    int somaLB = 0, somaLT = 0, somaCP = 0, somaCT = 0;
-    for (int i = 0; i < num; i++)
-    {
-        if (array[i] == 0 && colunasCheias[i])
-            return false;
-
-        if (colunasT[i] > ct[i])
-        {
-            return false;
-        }
-
-        if (colunasT[i] + N - linha - 1 < ct[i])
-            return false;
-
-        if (colunasP[i] > cb[i])
-        {
-            return false;
-        }
-
-        if (colunasP[i] + linhasFaltam[linha] < cb[i])
-        {
-            return false;
-        }
-
-        if (array[i] == 1)
-        {
-            somaLB += 1;
-        }
-        if (i != num - 1)
-        {
-            if (array[i] != array[i + 1])
+            if (qb[0] != QuadranteP[0] || qb[1] != QuadranteP[1])
             {
-                somaLT += 1;
+                return false;
             }
-        }
     }
-    if (somaLB != lb[linha] || somaLT != lt[linha])
+    return false;
+}
+}
+
+if (linha < linha2)
+{
+    if (falta * ceil(N / 2) < qb[1] - QuadranteP[1] || falta * (N - ceil(N / 2)) < qb[0] - QuadranteP[0])
     {
 
         return false;
     }
+}
+else
+{
+    int f = N - linha - 1;
+    if (f * ceil(N / 2) < qb[2] - QuadranteP[2] || f * (N - ceil(N / 2)) < qb[3] - QuadranteP[3])
+    {
+        return false;
+    }
+}
 
-    return true;
+if (linhasFaltam[linha] == -1)
+{
+    linhasFaltam[linha] = 0;
+    for (int i = linha + 1; i < N; i++)
+    {
+        if (lb[i] != 0)
+            linhasFaltam[linha]++;
+    }
+}
+
+if (diagonaisP[0] + linhasFaltam[linha] < db[0] || diagonaisP[1] + linhasFaltam[linha] < db[1])
+{
+    return false;
+}
+if (diagonaisP[0] > db[0] || diagonaisP[1] > db[1])
+{
+
+    return false;
+}
+
+for (int i = 0; i < 4; i++)
+{
+    if (qb[i] < QuadranteP[i])
+    {
+
+        return false;
+    }
+}
+
+int somaLB = 0, somaLT = 0, somaCP = 0, somaCT = 0;
+for (int i = 0; i < num; i++)
+{
+    if (array[i] == 0 && colunasCheias[i])
+        return false;
+
+    if (colunasT[i] > ct[i])
+    {
+        return false;
+    }
+
+    if (colunasT[i] + N - linha - 1 < ct[i])
+        return false;
+
+    if (colunasP[i] > cb[i])
+    {
+        return false;
+    }
+
+    if (colunasP[i] + linhasFaltam[linha] < cb[i])
+    {
+        return false;
+    }
+
+    if (array[i] == 1)
+    {
+        somaLB += 1;
+    }
+    if (i != num - 1)
+    {
+        if (array[i] != array[i + 1])
+        {
+            somaLT += 1;
+        }
+    }
+}
+if (somaLB != lb[linha] || somaLT != lt[linha])
+{
+
+    return false;
+}
+
+return true;
 }
 
 bool verificacaoAMEIO(vector<vector<int>> &array, int num, int col)
@@ -632,7 +637,7 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
         }
     }
 
-       // caso 1 preto com duas transicoes(01000)
+    // caso 1 preto com duas transicoes(01000)
     else if (preto == 1 && lt[linha] == 2 && inicio == 0)
     {
         comb = vector<int>(N, 0);
