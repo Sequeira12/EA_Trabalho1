@@ -506,7 +506,120 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
 
             if (preto > N / 2)
             {
-                for (int k = 0; k < preto - N / 2; k++)
+                if(lt[linha]==1 && preto-N/2==N-N/2-1){
+                    if(preto-N/2==N-N/2-1){
+                        for(int i=N/2;i<N-1;i++){
+                            comb[i]=1;
+                        }
+                        ConstroiMatriz(linha,comb,vec);
+                    }
+                }
+
+                else if(lt[linha]%2!=0 && preto - N/2==(N-N/2)/2){
+                    for (int i=1;i<N+1;i+=2){
+                        comb[i]=1;
+                    }
+
+                    ConstroiMatriz(linha,comb,vec);
+                }
+
+                else if (lt[linha]%2==0 && preto - N/2 == (N-N/2)/2){
+                     for (int i=0;i<N+1;i+=2){
+                        comb[i]=1;
+                    }
+
+                    ConstroiMatriz(linha,comb,vec);
+                }
+
+                else{
+              
+                    for (int k = 0; k < preto - N / 2; k++)
+                    {
+                        comb2[k] = 1;
+                    }
+
+                    do
+                    {
+                        for (int i = 0; i < N - N / 2; i++)
+                        {
+
+                            comb[i + N / 2] = comb2[i];
+                        }
+                        ConstroiMatriz(linha, comb, vec);
+                    } while (prev_permutation(comb2.begin(), comb2.end()));
+                }
+            }
+            else
+                ConstroiMatriz(linha, comb, vec);
+        }
+        else if (QuadrantesCheios[valor_dir])
+        {
+                for (int i = N / 2; i < N; i++)
+                {
+                    comb[i] = 1;
+                }
+
+                vector<int> comb2(N / 2, 0);
+
+                if (preto > N - N / 2)
+                {
+                    if(lt[linha==1] && preto-N-N/2==1){
+                        if(preto-N-N/2==1){
+                            comb[N/2-1]=1;
+                            ConstroiMatriz(linha,comb,vec);
+                        }
+                    }
+
+                    else if(lt[linha]%2==0 && preto-N-N/2==N/4){
+                        for (int i=0;i<N/2+1;i+=2){
+                            comb[i]=1;
+                        }
+
+                        ConstroiMatriz(linha,comb,vec);
+                    }
+
+                    else if(lt[linha]%2!=0 && preto-N-N/2==N/4){
+                          for (int i=1;i<N/2+1;i+=2){
+                            comb[i]=1;
+                        }
+
+                        ConstroiMatriz(linha,comb,vec);
+                    }
+                    
+                    else{
+                        for (int k = 0; k < preto - (N - N / 2); k++)
+                        {
+                            comb2[k] = 1;
+                        }
+                        do
+                        {
+                            for (int i = 0; i < N / 2; i++)
+                            {
+                                comb[i] = comb2[i];
+                            }
+                            ConstroiMatriz(linha, comb, vec);
+                        } while (prev_permutation(comb2.begin(), comb2.end()));
+                    }
+            }
+            else
+                ConstroiMatriz(linha, comb, vec);
+        }
+    }
+    else if (qb[valor_es] == 0 || qb[valor_dir] == 0)
+    {
+
+        comb = vector<int>(N, 0);
+        if (qb[valor_es] == 0)
+        {
+            if(lt[linha]==1 && (preto==1)){
+                if(preto==1){
+                    comb[N-1]=1;
+                    ConstroiMatriz(linha,comb,vec);
+                }
+            }
+            else{
+                vector<int> comb2(N - N / 2, 0);
+                for (int k = 0; k < preto; k++)
                 {
                     comb2[k] = 1;
                 }
@@ -520,60 +633,8 @@ void gerador(int preto, int linha, int inicio, int fim, vector<int> &combination
                     }
                     ConstroiMatriz(linha, comb, vec);
                 } while (prev_permutation(comb2.begin(), comb2.end()));
+
             }
-            else
-                ConstroiMatriz(linha, comb, vec);
-        }
-        else if (QuadrantesCheios[valor_dir])
-        {
-
-            for (int i = N / 2; i < N; i++)
-            {
-                comb[i] = 1;
-            }
-
-            vector<int> comb2(N / 2, 0);
-
-            if (preto > N - N / 2)
-            {
-                for (int k = 0; k < preto - (N - N / 2); k++)
-                {
-                    comb2[k] = 1;
-                }
-                do
-                {
-                    for (int i = 0; i < N / 2; i++)
-                    {
-                        comb[i] = comb2[i];
-                    }
-                    ConstroiMatriz(linha, comb, vec);
-                } while (prev_permutation(comb2.begin(), comb2.end()));
-            }
-            else
-                ConstroiMatriz(linha, comb, vec);
-        }
-    }
-    else if (qb[valor_es] == 0 || qb[valor_dir] == 0)
-    {
-
-        comb = vector<int>(N, 0);
-        if (qb[valor_es] == 0)
-        {
-            vector<int> comb2(N - N / 2, 0);
-            for (int k = 0; k < preto; k++)
-            {
-                comb2[k] = 1;
-            }
-
-            do
-            {
-                for (int i = 0; i < N - N / 2; i++)
-                {
-
-                    comb[i + N / 2] = comb2[i];
-                }
-                ConstroiMatriz(linha, comb, vec);
-            } while (prev_permutation(comb2.begin(), comb2.end()));
         }
 
         else if (qb[valor_dir] == 0)
